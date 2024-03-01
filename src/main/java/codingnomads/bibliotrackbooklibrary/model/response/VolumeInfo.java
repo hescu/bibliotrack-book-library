@@ -1,6 +1,5 @@
-package codingnomads.bibliotrackbooklibrary.model;
+package codingnomads.bibliotrackbooklibrary.model.response;
 
-import jakarta.persistence.GeneratedValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,11 +9,11 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Book {
+public class VolumeInfo {
 
-    @GeneratedValue
-    private Long id;
-    private int isbn;
+    private String kind;
+    private String id;
+    private List<IndustryIdentifier> industryIdentifiers;
     private String title;
     private List<String> author;
     private String publisher;
