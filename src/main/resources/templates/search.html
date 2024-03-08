@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <form class="col-lg-6" th:action="@{/search}" th:object="${searchText}" method="post">
+        <div class="input-group">
+            <span class="input-group-text">Search:</span>
+            <input type="text" class="form-control" id="searchText" name="searchText" placeholder="Search for a book...">
+            <button class="btn btn-info" type="submit">Search!</button>
+        </div>
+    </form>
+
+    <div class="result-container">
+        <h1>Search Results</h1>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="list-group">
+                    <div th:if="${searchResults}">
+                        <!-- Loop through search results -->
+                        <div th:each="item : ${searchResults}">
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <h5 class="mb-1" th:text="${item.volumeInfo.title}"></h5>
+                                <div th:each="author : ${item.volumeInfo.author}">
+                                    <p class="mb-1" th:text="${author}"></p>
+                                </div>
+                                <small th:text="${item.volumeInfo.publisher} + ' (' + ${item.volumeInfo.publishedDate} + ')'" class="text-muted"></small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
