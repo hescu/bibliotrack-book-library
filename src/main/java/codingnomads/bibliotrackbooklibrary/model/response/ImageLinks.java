@@ -5,10 +5,10 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@ToString
 @AllArgsConstructor
 @Builder
-public class IndustryIdentifier {
-
-    private String type;
-    private String identifier;
+public class ImageLinks {
+    private String smallThumbnail;
+    private String thumbnail;
 }
