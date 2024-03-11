@@ -16,7 +16,7 @@ public class AppController {
     @Autowired
     SearchService searchService;
 
-    @GetMapping
+    @GetMapping("/")
     public String displayIndex() {
         return "index";
     }
