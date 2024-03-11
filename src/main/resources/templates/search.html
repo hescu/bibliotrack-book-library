@@ -36,14 +36,14 @@
                             <div class="row">
                                 <!-- Thumbnail -->
                                 <div class="col-auto">
-                                    <img th:src="${item.volumeInfo.imageLinks.thumbnail}" alt="Thumbnail" class="img-fluid">
+                                    <img th:src="${item.volumeInfo.imageLinks.thumbnail}" alt="Thumbnail" width="100" height="141">
                                 </div>
                                 <div class="col">
                                     <h5 class="mb-1" th:text="${item.volumeInfo.title}"></h5>
                                     <div th:each="author : ${item.volumeInfo.authors}">
                                         <p class="mb-1" th:text="${author}"></p>
                                     </div>
-                                    <small th:text="${item.volumeInfo.publisher} + ' (' + ${item.volumeInfo.publishedDate} + ')'" class="text-muted"></small>
+                                    <small th:text="${item.volumeInfo.publisher != null} ? ${item.volumeInfo.publisher} : 'unknown' + ' (' + ${item.volumeInfo.publishedDate} + ')'" class="text-muted"></small>
                                 </div>
                             </div>
                         </div>

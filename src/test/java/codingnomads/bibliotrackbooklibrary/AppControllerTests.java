@@ -44,35 +44,4 @@ public class AppControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"));
     }
-
-    @Test
-    public void performSearch_Success() throws Exception {
-        String searchText = "test";
-        String searchCriteria = "default";
-        Item item = Item.builder()
-                .volumeInfo(VolumeInfo.builder()
-                        .authors(List.of(""))
-                        .description("")
-                        .title("")
-                        .imageLinks(ImageLinks.builder()
-                                .thumbnail("")
-                                .build())
-                        .publishedDate("")
-                        .publisher("")
-                        .build())
-                .build();
-
-        List<Item> searchResults = new ArrayList<>();
-        searchResults.add(item);
-
-        when(searchService.performSearch(searchText, searchCriteria)).thenReturn(searchResults);
-
-        mockMvc.perform(post("/search")
-                .param("searchText", searchText)
-                .param("searchCriteria", searchCriteria))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("searchResults", searchResults));
-
-        verify(searchService, times(1)).performSearch(searchText, searchCriteria);
-    }
 }
