@@ -13,4 +13,7 @@ public class AppController {
     public String displayIndex() {
         return "index";
     }
+
+    @GetMapping("/login")
+    public String displayLoginPage() { return "login"; }
 }

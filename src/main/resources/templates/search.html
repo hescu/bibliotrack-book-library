@@ -11,8 +11,8 @@
     <main class="container">
         <section class="pico">
             <form th:action="@{/search}" th:object="${searchText}" method="post" class="container">
+                <label for="searchCriteria">Search by:</label>
                 <div role="search" class="form-group">
-                    <label for="searchCriteria">Search by:</label>
                     <select id="searchCriteria" name="searchCriteria" class="form-control">
                         <option value="all">All</option>
                         <option value="isbn">ISBN</option>
