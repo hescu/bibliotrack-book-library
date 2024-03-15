@@ -1,8 +1,8 @@
 package codingnomads.bibliotrackbooklibrary;
 
-import codingnomads.bibliotrackbooklibrary.model.response.ImageLinks;
-import codingnomads.bibliotrackbooklibrary.model.response.Item;
-import codingnomads.bibliotrackbooklibrary.model.response.VolumeInfo;
+import codingnomads.bibliotrackbooklibrary.entity.google.response.ImageLinks;
+import codingnomads.bibliotrackbooklibrary.entity.google.response.Item;
+import codingnomads.bibliotrackbooklibrary.entity.google.response.VolumeInfo;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
-import codingnomads.bibliotrackbooklibrary.model.response.Item;
+import codingnomads.bibliotrackbooklibrary.entity.google.response.Item;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

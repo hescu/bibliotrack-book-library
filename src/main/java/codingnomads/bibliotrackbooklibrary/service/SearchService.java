@@ -1,48 +1,24 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
-import codingnomads.bibliotrackbooklibrary.model.response.GoogleBooksApiResponse;
-import codingnomads.bibliotrackbooklibrary.model.response.Item;
-import codingnomads.bibliotrackbooklibrary.model.response.VolumeInfo;
+import codingnomads.bibliotrackbooklibrary.dao.IBookApi;
+import codingnomads.bibliotrackbooklibrary.entity.google.response.GoogleBooksApiResponse;
+import codingnomads.bibliotrackbooklibrary.entity.google.response.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SearchService {
-    @Value("${google.books.api.key}")
-    private String googleBooksApiKey;
-
     @Autowired
-    RestTemplate restTemplate;
+    private IBookApi googleBookApi;
 
     public List<Item> performSearch(String searchText, String searchCriteria) {
-        List<Item> results = new ArrayList<>();
-        String requestUrl = buildRequestUrl(searchText, searchCriteria);
-
-        GoogleBooksApiResponse jsonResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
-        if (jsonResponse != null && jsonResponse.getTotalItems() > 0) {
-            results = jsonResponse.getItems();
-            for (Item item : results) {
-                System.out.println(item.getVolumeInfo().toString());
-            }
-            return jsonResponse.getItems();
-        } else {
-            return results;
-        }
-    }
-
-    private String buildRequestUrl(String searchText, String searchCriteria) {
-        String baseUrl = "https://www.googleapis.com/books/v1/volumes?q=";
-
-        return switch (searchCriteria) {
-            case "isbn" -> baseUrl + "isbn:" + searchText + "&key=" + googleBooksApiKey;
-            case "author" -> baseUrl + "inauthor:" + searchText + "&key=" + googleBooksApiKey;
-            case "title" -> baseUrl + "intitle:" + searchText + "&key=" + googleBooksApiKey;
-            default -> baseUrl + searchText + "&key=" + googleBooksApiKey;
-        };
+        return googleBookApi.preformSearch(searchText, searchCriteria);
     }
 }
