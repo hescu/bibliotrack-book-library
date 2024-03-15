@@ -12,17 +12,26 @@
         <ul>
             <li><strong>BiblioTrack</strong></li>
             <li class="nav-item">
-                <a class="nav-link contrast button" href="/">Home</a>
+                <a class="nav-link contrast button" th:href="@{/}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link contrast button" href="search">Search</a>
+                <a class="nav-link contrast button" th:href="@{/search}">Search</a>
             </li>
         </ul>
         <div class="login-container">
-            <div class="login-button">
-                <form action="/login" method="get">
-                    <button type="submit">Login</button>
-                </form>
+            <div th:if="${not #authorization.expression('isAuthenticated()')}">
+                <div class="login-button">
+                    <form action="/login" method="get">
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+            </div>
+            <div th:if="${#authorization.expression('isAuthenticated()')}">
+                <div class="logout-button">
+                    <form action="/logout" method="post">
+                        <button type="submit">Logout</button>
+                    </form>
+                </div>
             </div>
         </div>
     </nav>

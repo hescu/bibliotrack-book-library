@@ -1,6 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.model.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user_principal")
 @Getter
 @Setter
 @Builder
@@ -34,9 +35,16 @@ public class UserPrincipal implements UserDetails {
     )
     private List<Authority> authorities;
 
+    @Column(nullable = false)
     private boolean accountNonExpired;
+
+    @Column(nullable = false)
     private boolean accountNonLocked;
+
+    @Column(nullable = false)
     private boolean credentialsNonExpired;
+
+    @Column(nullable = false)
     private boolean enabled;
 
     public UserPrincipal(String username, String password, List<Authority> authorities) {

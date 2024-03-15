@@ -44,6 +44,10 @@
             color: #007bff;
             text-decoration: none;
         }
+        .register-button {
+            text-align: center;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -58,9 +62,27 @@
             </label>
             <button type="submit">Login</button>
         </form>
-        <div class="back-button">
-            <a href="/">Back</a>
+        <div class="register-button">
+            <a th:href="@{/register}">No account? Register here</a>
         </div>
+        <div class="back-button">
+            <a th:href="@{/}">Back</a>
+        </div>
+    </div>
+
+    <div th:if="${message}">
+        <dialog>
+            <article>
+                <header>
+                    <button aria-label="Close" rel="prev"></button>
+                    <p>
+                        <strong>Thank You for Registering!</strong>
+                    </p>
+                </header>
+                <p>Have fun with Bibliotrack.</p>
+                <p th:text="${message}"></p>
+            </article>
+        </dialog>
     </div>
 
     <div th:replace="~{fragments/footer :: footer}"></div>

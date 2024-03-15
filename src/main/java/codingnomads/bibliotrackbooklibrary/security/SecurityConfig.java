@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.config.annotation.web.configurers.AbstractAuthenticationFilterConfigurer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
@@ -24,7 +22,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/css/**");
+        return (web) -> web.ignoring().requestMatchers("/static/css/**");
     }
 
     @Bean
@@ -32,12 +30,13 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers( "/", "/login").permitAll()
+                    .requestMatchers( "/", "/login", "/register").permitAll()
                     .anyRequest().authenticated())
             .formLogin(formLogin ->
                     formLogin
                             .loginPage("/login")
-                            .permitAll());
+                            .permitAll()
+                            .defaultSuccessUrl("/search"));
         return http.build();
     }
 
@@ -46,10 +45,10 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService() {
-        Authority userAuth = Authority.builder().authority(RoleEnum.ROLE_USER).build();
-        UserPrincipal user1 = new UserPrincipal("user", passwordEncoder().encode("resu"), Collections.singletonList(userAuth));
-        return new InMemoryUserDetailsManager(user1);
-    }
+//    @Bean
+//    public InMemoryUserDetailsManager userDetailsService() {
+//        Authority userAuth = Authority.builder().authority(RoleEnum.ROLE_USER).build();
+//        UserPrincipal user1 = new UserPrincipal("user", passwordEncoder().encode("resu"), Collections.singletonList(userAuth));
+//        return new InMemoryUserDetailsManager(user1);
+//    }
 }

@@ -21,7 +21,15 @@ public class Authority implements GrantedAuthority {
     @Column(nullable = false)
     private RoleEnum authority;
 
+    public Authority(RoleEnum roleEnum) {
+        this.authority = roleEnum;
+    }
+
     public String getAuthority() {
         return authority.name();
+    }
+
+    public enum RoleEnum {
+        ROLE_USER
     }
 }
