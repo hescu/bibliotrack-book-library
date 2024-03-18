@@ -30,6 +30,7 @@ public class Authority implements GrantedAuthority {
     }
 
     public enum RoleEnum {
-        ROLE_USER
+        ROLE_USER,
+        ROLE_ADMIN
     }
 }

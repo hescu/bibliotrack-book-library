@@ -3,6 +3,7 @@ package codingnomads.bibliotrackbooklibrary.service;
 import codingnomads.bibliotrackbooklibrary.dao.IBookApi;
 import codingnomads.bibliotrackbooklibrary.entity.google.response.GoogleBooksApiResponse;
 import codingnomads.bibliotrackbooklibrary.entity.google.response.Item;
+import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class SearchService {
     @Autowired
     private IBookApi googleBookApi;
 
+    @Loggable
     public List<Item> performSearch(String searchText, String searchCriteria) {
         return googleBookApi.preformSearch(searchText, searchCriteria);
     }
