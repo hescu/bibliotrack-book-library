@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 @Aspect
 @Component
@@ -25,7 +26,7 @@ public class LoggingAspect {
         message.append(joinPoint.getSignature().getName());
         final Object[] args = joinPoint.getArgs();
         if (args != null && args.length > 0) {
-            message.append(" method args=|");
+            message.append("method args=|");
             Arrays.asList(args).forEach(arg -> {
                 message.append("arg=").append(arg).append("|");
             });
