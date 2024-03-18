@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -31,6 +32,7 @@ public class UserPrincipalService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Username or email not found : " + username));
     }
 
+    @Transactional
     public UserPrincipal createNewUser(UserPrincipal userPrincipal) {
         userPrincipal.setId(null);
         userPrincipal.setAccountNonExpired(true);

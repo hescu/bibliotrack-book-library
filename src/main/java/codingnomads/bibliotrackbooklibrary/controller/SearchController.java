@@ -1,6 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.entity.google.response.Item;
+import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +28,7 @@ public class SearchController {
         return "search";
     }
 
+    @Loggable
     @PostMapping()
     public String performSearch(@RequestParam String searchText, @RequestParam String searchCriteria, Model model) {
         List<Item> searchResults = searchService.performSearch(searchText, searchCriteria);
