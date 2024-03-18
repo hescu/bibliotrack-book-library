@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css" rel="stylesheet" crossorigin="anonymous">
 </head>
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
 
-    <main class="container">
-        <section class="pico">
-            <form th:action="@{/search}" th:object="${searchText}" method="post" class="container">
+    <main>
+        <section>
+            <form th:action="@{/search}" th:object="${searchText}" method="post">
                 <label for="searchCriteria">Search by:</label>
                 <div role="search" class="form-group">
                     <select id="searchCriteria" name="searchCriteria" class="form-control">
@@ -25,11 +25,12 @@
             </form>
         </section>
 
-        <div class="result-container">
+        <div>
             <h3 th:unless="${searchResults.isEmpty()}">Search Results</h3>
-            <div class="row">
+            <p>Total items found: <span th:text="${totalItemsFound}"></span></p>
+            <div>
                 <div class="col-lg-12">
-                    <div th:if="${searchResults}" class="row">
+                    <div th:if="${searchResults}">
                         <!-- Loop through search results -->
                         <div th:each="item : ${searchResults}" class="col-md-4 mb-4">
                             <article class="card grid">
@@ -46,6 +47,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div th:unless="${searchResults.isEmpty()}">
+            <p>Page <span th:text="${currentPage}"></span> of <span th:text="${totalPages}"></span></p>
+            <button th:disabled="${currentPage == 1}" th:onclick="'javascript:prevPage()'" type="button">Previous</button>
+            <button th:disabled="${currentPage == totalPages}" th:onclick="'javascript:nextPage()'" type="button">Next</button>
         </div>
     </main>
 

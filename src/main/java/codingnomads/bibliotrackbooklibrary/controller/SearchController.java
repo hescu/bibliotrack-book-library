@@ -1,5 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
+import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
+import codingnomads.bibliotrackbooklibrary.entity.google.response.GoogleBooksApiResponse;
 import codingnomads.bibliotrackbooklibrary.entity.google.response.Item;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class SearchController {
     @Autowired
     SearchService searchService;
 
+    @Autowired
+    GoogleBookApi googleBookApi;
+
     @GetMapping()
     public String displaySearchPage(Model model) {
         List<Item> emptyList = new ArrayList<>();
@@ -28,9 +33,20 @@ public class SearchController {
     }
 
     @PostMapping()
-    public String performSearch(@RequestParam String searchText, @RequestParam String searchCriteria, Model model) {
-        List<Item> searchResults = searchService.performSearch(searchText, searchCriteria);
+    public String performSearch(@RequestParam String searchText,
+                                @RequestParam String searchCriteria,
+                                @RequestParam(defaultValue = "1") int page,
+                                Model model) {
+        GoogleBooksApiResponse googleBooksApiResponse = searchService.performSearch(searchText, searchCriteria, page);
+        int totalItemsFound = googleBooksApiResponse.getTotalItems();
+        List<Item> searchResults = googleBooksApiResponse.getItems();
+        model.addAttribute("totalItemsFound", totalItemsFound);
         model.addAttribute("searchResults", searchResults);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", searchService.calculateTotalPages(
+                googleBooksApiResponse.getTotalItems(),
+                googleBookApi.getITEMS_PER_PAGE())
+        );
         return "search";
     }
 }

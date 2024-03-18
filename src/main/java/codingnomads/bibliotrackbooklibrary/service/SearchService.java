@@ -20,7 +20,11 @@ public class SearchService {
     private IBookApi googleBookApi;
 
     @Loggable
-    public List<Item> performSearch(String searchText, String searchCriteria) {
-        return googleBookApi.preformSearch(searchText, searchCriteria);
+    public GoogleBooksApiResponse performSearch(String searchText, String searchCriteria, int page) {
+        return googleBookApi.performSearch(searchText, searchCriteria, page);
+    }
+
+    public int calculateTotalPages(int totalItems, int itemsPerPage) {
+        return (int) Math.ceil((double) totalItems / itemsPerPage);
     }
 }

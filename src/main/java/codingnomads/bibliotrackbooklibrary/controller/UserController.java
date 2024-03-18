@@ -1,5 +1,6 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
+import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.service.UserPrincipalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public class UserController {
     @Autowired
     UserPrincipalService customUserDetailsService;
 
+    @Loggable
     @PostMapping(path = "/register")
     public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) {
         UserPrincipal newUserPrincipal = new UserPrincipal();
