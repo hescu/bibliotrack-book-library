@@ -1,10 +1,8 @@
 package codingnomads.bibliotrackbooklibrary.dao;
 
-import codingnomads.bibliotrackbooklibrary.entity.google.response.GoogleBooksApiResponse;
-import codingnomads.bibliotrackbooklibrary.entity.google.response.Item;
-
-import java.util.List;
+import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
+import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 
 public interface IBookApi {
-    GoogleBooksApiResponse performSearch(String searchTerm, String searchCriteria, int page);
+    GoogleBooksApiResponse performSearch(SearchFormData searchFormData);
 }

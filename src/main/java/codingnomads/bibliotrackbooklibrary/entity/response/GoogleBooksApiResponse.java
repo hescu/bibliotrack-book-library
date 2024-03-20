@@ -1,4 +1,4 @@
-package codingnomads.bibliotrackbooklibrary.entity.google.response;
+package codingnomads.bibliotrackbooklibrary.entity.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

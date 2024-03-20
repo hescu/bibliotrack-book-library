@@ -1,9 +1,9 @@
 package codingnomads.bibliotrackbooklibrary;
 
-import codingnomads.bibliotrackbooklibrary.entity.google.response.GoogleBooksApiResponse;
-import codingnomads.bibliotrackbooklibrary.entity.google.response.ImageLinks;
-import codingnomads.bibliotrackbooklibrary.entity.google.response.Item;
-import codingnomads.bibliotrackbooklibrary.entity.google.response.VolumeInfo;
+import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
+import codingnomads.bibliotrackbooklibrary.entity.response.ImageLinks;
+import codingnomads.bibliotrackbooklibrary.entity.response.Item;
+import codingnomads.bibliotrackbooklibrary.entity.response.VolumeInfo;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
