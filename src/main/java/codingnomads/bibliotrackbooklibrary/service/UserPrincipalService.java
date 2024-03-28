@@ -31,7 +31,7 @@ public class UserPrincipalService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Username or email not found : " + username));
     }
 
-    public UserPrincipal createNewUser(UserPrincipal userPrincipal) throws IllegalStateException {
+    public UserPrincipal createNewUser(UserPrincipal userPrincipal) {
         checkIfUsernameAlreadyExists(userPrincipal.getUsername());
         checkPassword(userPrincipal.getPassword());
         userPrincipal.setId(null);

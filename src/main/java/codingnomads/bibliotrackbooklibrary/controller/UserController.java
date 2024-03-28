@@ -25,10 +25,10 @@ public class UserController {
             newUserPrincipal.setPassword(password);
             customUserDetailsService.createNewUser(newUserPrincipal);
             redirectAttributes.addFlashAttribute("registerSuccessMessage", "User registered successfully");
-            return "login";
+            return "redirect:/login";
         } catch (IllegalStateException e) {
             redirectAttributes.addFlashAttribute("registerErrorMessage", e.getMessage());
-            return "register";
+            return "redirect:/register";
         } catch (Exception e) {
             return "error";
         }
