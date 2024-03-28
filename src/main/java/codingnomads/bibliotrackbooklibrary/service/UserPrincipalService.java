@@ -31,7 +31,9 @@ public class UserPrincipalService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Username or email not found : " + username));
     }
 
-    public UserPrincipal createNewUser(UserPrincipal userPrincipal) {
+    public UserPrincipal createNewUser(UserPrincipal userPrincipal) throws IllegalStateException {
+        checkIfUsernameAlreadyExists(userPrincipal.getUsername());
+        checkPassword(userPrincipal.getPassword());
         userPrincipal.setId(null);
         userPrincipal.setAccountNonExpired(true);
         userPrincipal.setAccountNonLocked(true);
@@ -44,8 +46,8 @@ public class UserPrincipalService implements UserDetailsService {
                 .singletonList(authority))
         );
 
-        checkPassword(userPrincipal.getPassword());
         userPrincipal.setPassword(passwordEncoder.encode(userPrincipal.getPassword()));
+
         try {
             return userPrincipalRepo.save(userPrincipal);
         } catch (Exception e) {
@@ -59,6 +61,12 @@ public class UserPrincipalService implements UserDetailsService {
         }
         if(password.length() < 8) {
             throw new IllegalStateException("Password is too short. Must be larger than 6 characters");
+        }
+    }
+
+    private void checkIfUsernameAlreadyExists(String username) {
+        if (userPrincipalRepo.findByUsername(username).isEmpty()) {
+            throw new IllegalStateException("Username already exists");
         }
     }
 }

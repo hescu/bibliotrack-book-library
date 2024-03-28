@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registration</title>
-    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.classless.min.css" rel="stylesheet" crossorigin="anonymous">
 </head>
 <body>
-    <div class="register-container pico">
+    <main>
         <h2>Login</h2>
         <h2>User Registration</h2>
         <form th:action="@{/register}" method="post">
@@ -15,6 +15,7 @@
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
             </div>
+            <p th:if="${registerErrorMessage}" th:text="${registerErrorMessage}"></p>
             <div>
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
@@ -24,7 +25,7 @@
         <div class="back-button">
             <a th:href="@{/}">Back</a>
         </div>
-    </div>
+    </main>
 
     <div th:replace="~{fragments/footer :: footer}"></div>
 </body>

@@ -19,13 +19,16 @@ public class UserController {
 
     @PostMapping(path = "/register")
     public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) {
-        UserPrincipal newUserPrincipal = new UserPrincipal();
-        newUserPrincipal.setUsername(username);
-        newUserPrincipal.setPassword(password);
         try {
+            UserPrincipal newUserPrincipal = new UserPrincipal();
+            newUserPrincipal.setUsername(username);
+            newUserPrincipal.setPassword(password);
             customUserDetailsService.createNewUser(newUserPrincipal);
-            redirectAttributes.addFlashAttribute("message", "User registered successfully");
+            redirectAttributes.addFlashAttribute("registerSuccessMessage", "User registered successfully");
             return "login";
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("registerErrorMessage", e.getMessage());
+            return "register";
         } catch (Exception e) {
             return "error";
         }

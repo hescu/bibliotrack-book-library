@@ -40,7 +40,7 @@ public class BibliotrackBookLibraryApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		if (!userPrincipalRepo.existsByUsername("admin2")) {
+		if (userPrincipalRepo.findByUsername("admin2").isEmpty()) {
 			UserPrincipal adminUser = new UserPrincipal();
 			Authority authority = authorityRepo.getReferenceById(2L);
 
