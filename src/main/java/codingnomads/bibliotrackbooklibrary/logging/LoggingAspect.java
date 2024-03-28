@@ -16,31 +16,31 @@ public class LoggingAspect {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
 
     @Pointcut("@annotation(Loggable)")
-    private void executeLogging() { }
+    public void executeLogging() { }
 
     @Pointcut("execution(public * codingnomads.bibliotracklibrary.service.*.*(..))")
-    private void publicMethodsFromServicePackage() { }
+    public void publicMethodsFromServicePackage() { }
+
+    @Before("executeLogging()")
+    public void logBefore(JoinPoint joinPoint) {
+        StringBuilder message = new StringBuilder("Method Name : ");
+        message.append(joinPoint.getSignature().getName());
+        final Object[] args = joinPoint.getArgs();
+        if (args != null && args.length > 0) {
+            message.append("method args=|");
+            Arrays.asList(args).forEach(arg -> {
+                message.append("arg=").append(arg).append("|");
+            });
+        }
+        LOGGER.info(message.toString());
+    }
 
 //    @Before("executeLogging()")
 //    public void logBefore(JoinPoint joinPoint) {
-//        StringBuilder message = new StringBuilder("Method Name : ");
-//        message.append(joinPoint.getSignature().getName());
 //        final Object[] args = joinPoint.getArgs();
-//        if (args != null && args.length > 0) {
-//            message.append("method args=|");
-//            Arrays.asList(args).forEach(arg -> {
-//                message.append("arg=").append(arg).append("|");
-//            });
-//        }
-//        LOGGER.info(message.toString());
+//        String methodName = joinPoint.getSignature().getName();
+//        LOGGER.debug(">> {}() - {}", methodName, Arrays.toString(args));
 //    }
-
-    @Before("annotation(Loggable)")
-    public void logBefore(JoinPoint joinPoint) {
-        final Object[] args = joinPoint.getArgs();
-        String methodName = joinPoint.getSignature().getName();
-        LOGGER.debug(">> {}() - {}", methodName, Arrays.toString(args));
-    }
 
     @AfterReturning(value = "publicMethodsFromServicePackage()", returning = "result")
     public void logAfterServiceMethod(JoinPoint joinPoint, Object result) {

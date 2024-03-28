@@ -1,6 +1,9 @@
 package codingnomads.bibliotrackbooklibrary.dao;
 
 import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
+import codingnomads.bibliotrackbooklibrary.entity.response.Item;
+import codingnomads.bibliotrackbooklibrary.entity.response.VolumeInfo;
+import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.Book;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -16,7 +21,7 @@ import java.util.Map;
 public class GoogleBookApi implements IBookApi {
 
     private final String ENDPOINT_BASE_URL = "https://www.googleapis.com";
-    private final String ENDPOINT_GOOGLE_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?maxResults=%s&q=%s:%s&key=%s";
+    private final String ENDPOINT_GOOGLE_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?startIndex=%s&maxResults=%s&q=%s:%s&key=%s";
     public static final Map<String, String> searchCriteriaToGoogleQueryCriteria = new HashMap<>();
 
     @Value("${google.books.api.key}")
@@ -26,28 +31,59 @@ public class GoogleBookApi implements IBookApi {
     RestTemplate restTemplate;
 
     @Override
-    public GoogleBooksApiResponse performSearch(SearchFormData searchFormData) {
-        final int MAX_RESULTS = 40;
+    public List<Book> performSearch(SearchFormData searchFormData) {
         GoogleBooksApiResponse resultResponse = new GoogleBooksApiResponse();
         String requestUrl = buildGoogleRequestUrl(
                 searchFormData.getSearchString(),
                 searchFormData.getSearchCriteria(),
-                MAX_RESULTS
+                searchFormData.getStartIndex(),
+                searchFormData.getMaxResults()
         );
 
         GoogleBooksApiResponse jsonResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
+        List<Book> books = new ArrayList<>();
         if (jsonResponse != null && jsonResponse.getTotalItems() > 0) {
-            return jsonResponse;
+            List<Item> foundItems = jsonResponse.getItems();
+            for (Item item : foundItems) {
+                VolumeInfo volumeInfo = item.getVolumeInfo();
+
+                if (volumeInfo == null) {
+                    continue;
+                }
+
+                String thumbnail = null;
+                if (volumeInfo.getImageLinks() != null) {
+                    thumbnail = volumeInfo.getImageLinks().getThumbnail();
+                }
+
+                String isbn = null;
+                if (volumeInfo.getIndustryIdentifiers() != null) {
+                    isbn = volumeInfo.getIndustryIdentifiers().getFirst().getIdentifier();
+                }
+
+                Book book = new Book(
+                        isbn,
+                        volumeInfo.getTitle(),
+                        volumeInfo.getAuthors(),
+                        thumbnail,
+                        volumeInfo.getPublisher(),
+                        volumeInfo.getPublishedDate(),
+                        volumeInfo.getDescription(),
+                        volumeInfo.getPageCount()
+                );
+                books.add(book);
+            }
+            return books;
         } else {
-            return resultResponse;
+            return books;
         }
     }
 
-    private String buildGoogleRequestUrl(String searchText, String searchCriteria, int maxResults) {
+    private String buildGoogleRequestUrl(String searchText, String searchCriteria, int startIndex, int maxResults) {
         searchCriteriaToGoogleQueryCriteria.put("author", "inauthor");
         searchCriteriaToGoogleQueryCriteria.put("title", "intitle");
         String searchTerm = searchCriteriaToGoogleQueryCriteria.get(searchCriteria);
 
-        return String.format(ENDPOINT_GOOGLE_SEARCH, maxResults, searchTerm, searchText, googleBooksApiKey);
+        return String.format(ENDPOINT_GOOGLE_SEARCH, startIndex, maxResults, searchTerm, searchText, googleBooksApiKey);
     }
 }

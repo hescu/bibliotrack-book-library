@@ -3,6 +3,7 @@ package codingnomads.bibliotrackbooklibrary.controller;
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
 import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
 import codingnomads.bibliotrackbooklibrary.entity.response.Item;
+import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.Book;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +33,9 @@ public class SearchController {
     }
 
     @PostMapping()
-    public String performSearch(@ModelAttribute("searchFormData") SearchFormData searchFormData, Model model) {
-        GoogleBooksApiResponse googleBooksApiResponse = searchService.performSearch(searchFormData);
-        List<Item> searchResults = googleBooksApiResponse.getItems();
-        model.addAttribute("searchResults", searchResults);
+    public String performSearch(@ModelAttribute("searchFormData") SearchFormData searchFormData,
+                                Model model) {
+        model.addAttribute("searchResults", searchService.performSearch(searchFormData));
         return "search";
     }
 }

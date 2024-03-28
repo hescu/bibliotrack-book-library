@@ -15,11 +15,9 @@ public class AppController {
         return "index";
     }
 
-    @Loggable
     @GetMapping("/login")
     public String displayLoginPage() { return "login"; }
 
-    @Loggable
     @PostMapping("/logout")
     public String logout() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -29,7 +27,6 @@ public class AppController {
         return "redirect:index";
     }
 
-    @Loggable
     @GetMapping("/register")
     public String displayRegisterPage() {
         return "register";

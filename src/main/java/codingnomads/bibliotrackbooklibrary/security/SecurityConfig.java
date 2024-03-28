@@ -22,15 +22,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers( "/", "/login", "/register").permitAll()
-                    .anyRequest().authenticated())
-            .formLogin(formLogin ->
-                    formLogin
-                            .loginPage("/login")
-                            .permitAll()
-                            .defaultSuccessUrl("/search"));
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/login", "/register").permitAll()
+                        .requestMatchers("/admin").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .formLogin(formLogin ->
+                        formLogin
+                                .loginPage("/login")
+                                .permitAll()
+                                .defaultSuccessUrl("/search"));
         return http.build();
     }
 
@@ -39,10 +40,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public InMemoryUserDetailsManager userDetailsService() {
-//        Authority userAuth = Authority.builder().authority(RoleEnum.ROLE_USER).build();
-//        UserPrincipal user1 = new UserPrincipal("user", passwordEncoder().encode("resu"), Collections.singletonList(userAuth));
-//        return new InMemoryUserDetailsManager(user1);
-//    }
 }

@@ -17,7 +17,7 @@
             <li class="nav-item">
                 <a class="nav-link contrast button" th:href="@{/search}">Search</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()') and #authorization.expression('hasRole(''ADMIN'')')}">
                 <a class="nav-link contrast button" th:href="@{/admin}">Admin</a>
             </li>
         </ul>

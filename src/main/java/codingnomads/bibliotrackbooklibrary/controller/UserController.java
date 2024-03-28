@@ -17,7 +17,6 @@ public class UserController {
     @Autowired
     UserPrincipalService customUserDetailsService;
 
-    @Loggable
     @PostMapping(path = "/register")
     public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) {
         UserPrincipal newUserPrincipal = new UserPrincipal();
