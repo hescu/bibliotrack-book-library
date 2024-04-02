@@ -30,7 +30,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("registerErrorMessage", e.getMessage());
             return "redirect:/register";
         } catch (Exception e) {
-            return "error";
+            return "errors/error";
         }
     }
 }

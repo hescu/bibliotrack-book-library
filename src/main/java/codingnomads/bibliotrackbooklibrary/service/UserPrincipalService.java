@@ -4,11 +4,14 @@ import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.repository.security.AuthorityRepo;
 import codingnomads.bibliotrackbooklibrary.repository.security.UserPrincipalRepo;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -32,7 +35,9 @@ public class UserPrincipalService implements UserDetailsService {
     }
 
     public UserPrincipal createNewUser(UserPrincipal userPrincipal) {
-        checkIfUsernameAlreadyExists(userPrincipal.getUsername());
+        if (!checkIfUsernameAlreadyExists(userPrincipal.getUsername())) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
         checkPassword(userPrincipal.getPassword());
         userPrincipal.setId(null);
         userPrincipal.setAccountNonExpired(true);
@@ -64,9 +69,7 @@ public class UserPrincipalService implements UserDetailsService {
         }
     }
 
-    private void checkIfUsernameAlreadyExists(String username) {
-        if (userPrincipalRepo.findByUsername(username).isEmpty()) {
-            throw new IllegalStateException("Username already exists");
-        }
+    private boolean checkIfUsernameAlreadyExists(String username) {
+        return userPrincipalRepo.countUsername(username) == 0;
     }
 }
