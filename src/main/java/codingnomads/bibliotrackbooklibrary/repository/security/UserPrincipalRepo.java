@@ -11,9 +11,5 @@ import java.util.Optional;
 
 @Repository
 public interface UserPrincipalRepo extends JpaRepository<UserPrincipal, Long> {
-
-    @Query("SELECT COUNT(u) FROM UserPrincipal u WHERE u.username = :username")
-    int countUsername(@Param("username") String username);
-
     Optional<UserPrincipal> findByUsername(String username);
 }

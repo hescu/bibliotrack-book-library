@@ -1,7 +1,9 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
+import codingnomads.bibliotrackbooklibrary.exception.UsernameAlreadyExistsException;
 import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
+import codingnomads.bibliotrackbooklibrary.mybatis.UserPrincipalMapper;
 import codingnomads.bibliotrackbooklibrary.repository.security.AuthorityRepo;
 import codingnomads.bibliotrackbooklibrary.repository.security.UserPrincipalRepo;
 import org.apache.coyote.BadRequestException;
@@ -28,6 +30,9 @@ public class UserPrincipalService implements UserDetailsService {
     @Autowired
     AuthorityRepo authorityRepo;
 
+    @Autowired
+    UserPrincipalMapper userPrincipalMapper;
+
     @Override
     public UserPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
         return userPrincipalRepo.findByUsername(username)
@@ -36,7 +41,7 @@ public class UserPrincipalService implements UserDetailsService {
 
     public UserPrincipal createNewUser(UserPrincipal userPrincipal) {
         if (!checkIfUsernameAlreadyExists(userPrincipal.getUsername())) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+            throw new UsernameAlreadyExistsException(userPrincipal.getUsername());
         }
         checkPassword(userPrincipal.getPassword());
         userPrincipal.setId(null);
@@ -70,6 +75,6 @@ public class UserPrincipalService implements UserDetailsService {
     }
 
     private boolean checkIfUsernameAlreadyExists(String username) {
-        return userPrincipalRepo.countUsername(username) == 0;
+        return userPrincipalMapper.countUsernames(username) == 0;
     }
 }
