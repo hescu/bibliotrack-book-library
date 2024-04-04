@@ -1,21 +1,19 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
-import codingnomads.bibliotrackbooklibrary.exception.UsernameAlreadyExistsException;
+import codingnomads.bibliotrackbooklibrary.exception.UserExceptions;
 import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.mybatis.UserPrincipalMapper;
 import codingnomads.bibliotrackbooklibrary.repository.security.AuthorityRepo;
 import codingnomads.bibliotrackbooklibrary.repository.security.UserPrincipalRepo;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,7 +39,7 @@ public class UserPrincipalService implements UserDetailsService {
 
     public UserPrincipal createNewUser(UserPrincipal userPrincipal) {
         if (!checkIfUsernameAlreadyExists(userPrincipal.getUsername())) {
-            throw new UsernameAlreadyExistsException(userPrincipal.getUsername());
+            throw new UserExceptions.UsernameAlreadyExistsException(userPrincipal.getUsername());
         }
         checkPassword(userPrincipal.getPassword());
         userPrincipal.setId(null);
@@ -67,14 +65,18 @@ public class UserPrincipalService implements UserDetailsService {
 
     private void checkPassword(String password) {
         if(password == null) {
-            throw new IllegalStateException("You must set a password");
+            throw new UserExceptions.InvalidPasswordException("You must set a password");
         }
-        if(password.length() < 8) {
-            throw new IllegalStateException("Password is too short. Must be larger than 6 characters");
+        if (password.length() < 6 || password.length() > 30) {
+            throw new UserExceptions.InvalidPasswordException("Password must be between 6 and 30 characters long");
         }
     }
 
     private boolean checkIfUsernameAlreadyExists(String username) {
         return userPrincipalMapper.countUsernames(username) == 0;
+    }
+
+    public List<UserPrincipal> findAllUsers() {
+        return userPrincipalRepo.findAll();
     }
 }

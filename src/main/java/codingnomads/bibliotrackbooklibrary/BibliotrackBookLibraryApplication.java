@@ -2,6 +2,7 @@ package codingnomads.bibliotrackbooklibrary;
 
 import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
+import codingnomads.bibliotrackbooklibrary.mybatis.UserPrincipalMapper;
 import codingnomads.bibliotrackbooklibrary.repository.security.AuthorityRepo;
 import codingnomads.bibliotrackbooklibrary.repository.security.UserPrincipalRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class BibliotrackBookLibraryApplication implements CommandLineRunner {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private UserPrincipalMapper userPrincipalMapper;
+
 	public static void main(String[] args) {
 		SpringApplication.run(BibliotrackBookLibraryApplication.class, args);
 	}
@@ -40,12 +44,12 @@ public class BibliotrackBookLibraryApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		if (userPrincipalRepo.findByUsername("admin2").isEmpty()) {
+		if (userPrincipalMapper.findByUsername("admin").isEmpty()) {
 			UserPrincipal adminUser = new UserPrincipal();
 			Authority authority = authorityRepo.getReferenceById(2L);
 
-			adminUser.setUsername("admin2");
-			adminUser.setPassword(passwordEncoder.encode("murraychristmas"));
+			adminUser.setUsername("admin");
+			adminUser.setPassword(passwordEncoder.encode("admin"));
 			adminUser.setAuthorities(Collections.singletonList(authority));
 			adminUser.setCredentialsNonExpired(true);
 			adminUser.setAccountNonLocked(true);

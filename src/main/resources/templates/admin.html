@@ -9,7 +9,25 @@
     <div th:replace="~{fragments/header :: header}"></div>
 
     <main>
-        <p>Admin page works</p>
+        <h2>User Table</h2>
+        <table>
+            <thead>
+            <tr>
+                <th scope="col">User-ID</th>
+                <th scope="col">Username</th>
+                <th scope="col">Role(s)</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.username}"></td>
+                    <td>
+                        <span th:each="role : ${user.authorities}" th:text="${role.authority}"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </main>
 
     <div th:replace="~{fragments/footer :: footer}"></div>

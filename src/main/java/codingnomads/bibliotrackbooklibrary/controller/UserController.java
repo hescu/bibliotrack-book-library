@@ -1,16 +1,12 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
-import codingnomads.bibliotrackbooklibrary.exception.UsernameAlreadyExistsException;
-import codingnomads.bibliotrackbooklibrary.logging.Loggable;
+import codingnomads.bibliotrackbooklibrary.exception.UserExceptions;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.service.UserPrincipalService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -28,8 +24,11 @@ public class UserController {
             customUserDetailsService.createNewUser(newUserPrincipal);
             redirectAttributes.addFlashAttribute("registerSuccessMessage", "User registered successfully");
             return "redirect:/login";
-        } catch (UsernameAlreadyExistsException e) {
-            redirectAttributes.addFlashAttribute("registerErrorMessage", e.getMessage());
+        } catch (UserExceptions.UsernameAlreadyExistsException e) {
+            redirectAttributes.addFlashAttribute("usernameErrorMessage", e.getMessage());
+            return "redirect:/register";
+        } catch (UserExceptions.InvalidPasswordException e) {
+            redirectAttributes.addFlashAttribute("passwordErrorMessage", e.getMessage());
             return "redirect:/register";
         } catch (Exception e) {
             return "errors/error";

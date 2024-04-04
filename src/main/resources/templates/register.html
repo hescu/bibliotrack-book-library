@@ -15,11 +15,12 @@
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
             </div>
-            <p th:if="${registerErrorMessage}" th:text="${registerErrorMessage}"></p>
+            <p th:if="${usernameErrorMessage}" th:text="${usernameErrorMessage}"></p>
             <div>
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required>
             </div>
+            <p th:if="${passwordErrorMessage}" th:text="${passwordErrorMessage}"></p>
             <button type="submit">Register</button>
         </form>
         <div class="back-button">
