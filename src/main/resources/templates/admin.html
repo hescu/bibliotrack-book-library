@@ -25,6 +25,11 @@
                     <td>
                         <span th:each="role : ${user.authorities}" th:text="${role.authority}"></span>
                     </td>
+                    <td>
+                        <form th:action="@{'/admin/delete_user/' + ${user.id}}" th:method="post">
+                            <button type="submit">Delete User</button>
+                        </form>
+                    </td>
                 </tr>
             </tbody>
         </table>

@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -78,5 +79,12 @@ public class UserPrincipalService implements UserDetailsService {
 
     public List<UserPrincipal> findAllUsers() {
         return userPrincipalRepo.findAll();
+    }
+
+    @Transactional
+    public void deleteUserById(Long id) {
+        int rowsDeleted = userPrincipalMapper.deleteFromUserAuthorityJoinTableById(id);
+        int rowsDeleted2 = userPrincipalMapper.deleteUserPrincipalById(id);
+        System.out.println(rowsDeleted + rowsDeleted2);
     }
 }

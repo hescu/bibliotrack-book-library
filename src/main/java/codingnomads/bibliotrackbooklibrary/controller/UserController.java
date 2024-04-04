@@ -5,9 +5,13 @@ import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.service.UserPrincipalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Arrays;
 
 @Controller
 public class UserController {
@@ -32,6 +36,18 @@ public class UserController {
             return "redirect:/register";
         } catch (Exception e) {
             return "errors/error";
+        }
+    }
+
+    @PostMapping(path = "/admin/delete_user/{id}")
+    public String deleteUser(@PathVariable Long id) {
+        try {
+            customUserDetailsService.deleteUserById(id);
+            return "redirect:/admin";
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
+            return "redirect:/errors/error";
         }
     }
 }
