@@ -27,7 +27,8 @@
                     </td>
                     <td>
                         <form th:action="@{'/admin/delete_user/' + ${user.id}}" th:method="post">
-                            <button type="submit">Delete User</button>
+                            <button type="submit" th:if="${user.username != loggedInUsername}">Delete User</button>
+                            <button type="submit" th:if="${user.username == loggedInUsername}" disabled>Delete User</button>
                         </form>
                     </td>
                 </tr>

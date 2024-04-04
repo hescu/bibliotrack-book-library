@@ -31,8 +31,7 @@ public class SecurityConfig {
                 .formLogin(formLogin ->
                         formLogin
                                 .loginPage("/login")
-                                .permitAll()
-                                .defaultSuccessUrl("/search"));
+                                .permitAll());
         return http.build();
     }
 
