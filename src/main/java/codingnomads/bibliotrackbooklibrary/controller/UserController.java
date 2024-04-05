@@ -19,7 +19,7 @@ public class UserController {
     UserPrincipalService customUserDetailsService;
 
     @PostMapping(path = "/register")
-    public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) {
+    public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) throws Exception {
         try {
             UserPrincipal newUserPrincipal = new UserPrincipal();
             newUserPrincipal.setUsername(username);
@@ -33,20 +33,16 @@ public class UserController {
         } catch (UserExceptions.InvalidPasswordException e) {
             redirectAttributes.addFlashAttribute("passwordErrorMessage", e.getMessage());
             return "redirect:/register";
-        } catch (Exception e) {
-            return "errors/error";
         }
     }
 
     @PostMapping(path = "/admin/delete_user/{id}")
-    public String deleteUser(@PathVariable Long id) {
+    public String deleteUser(@PathVariable Long id) throws Exception {
         try {
             customUserDetailsService.deleteUserById(id);
             return "redirect:/admin";
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(Arrays.toString(e.getStackTrace()));
-            return "redirect:/errors/error";
+            throw new Exception(e.getMessage());
         }
     }
 }

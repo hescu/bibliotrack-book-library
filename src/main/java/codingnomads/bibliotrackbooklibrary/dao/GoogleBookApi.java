@@ -21,7 +21,8 @@ import java.util.Map;
 public class GoogleBookApi implements IBookApi {
 
     private final String ENDPOINT_BASE_URL = "https://www.googleapis.com";
-    private final String ENDPOINT_GOOGLE_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?startIndex=%s&maxResults=%s&q=%s:%s&key=%s";
+    private final String ENDPOINT_GOOGLE_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?startIndex=%s&maxResults=%s&langRestrict=%s&q=%s:%s&key=%s";
+    private final String LANGUAGE_RESTRICTION = "en";
     public static final Map<String, String> searchCriteriaToGoogleQueryCriteria = new HashMap<>();
 
     @Value("${google.books.api.key}")
@@ -84,6 +85,6 @@ public class GoogleBookApi implements IBookApi {
         searchCriteriaToGoogleQueryCriteria.put("title", "intitle");
         String searchTerm = searchCriteriaToGoogleQueryCriteria.get(searchCriteria);
 
-        return String.format(ENDPOINT_GOOGLE_SEARCH, startIndex, maxResults, searchTerm, searchText, googleBooksApiKey);
+        return String.format(ENDPOINT_GOOGLE_SEARCH, startIndex, maxResults, LANGUAGE_RESTRICTION, searchTerm, searchText, googleBooksApiKey);
     }
 }
