@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Book {
+public class ThymeleafBook {
 
     private String isbn;
     private String title;

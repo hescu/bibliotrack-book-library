@@ -1,5 +1,6 @@
 package codingnomads.bibliotrackbooklibrary.model.security;
 
+import codingnomads.bibliotrackbooklibrary.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -46,6 +47,10 @@ public class UserPrincipal implements UserDetails {
 
     @Column(nullable = false)
     private boolean enabled;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     public UserPrincipal(String username, String password, List<Authority> authorities) {
         this.username = username;

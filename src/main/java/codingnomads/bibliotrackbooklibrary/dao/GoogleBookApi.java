@@ -3,7 +3,7 @@ package codingnomads.bibliotrackbooklibrary.dao;
 import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
 import codingnomads.bibliotrackbooklibrary.entity.response.Item;
 import codingnomads.bibliotrackbooklibrary.entity.response.VolumeInfo;
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.Book;
+import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class GoogleBookApi implements IBookApi {
     RestTemplate restTemplate;
 
     @Override
-    public List<Book> performSearch(SearchFormData searchFormData) {
+    public List<ThymeleafBook> performSearch(SearchFormData searchFormData) {
         GoogleBooksApiResponse resultResponse = new GoogleBooksApiResponse();
         String requestUrl = buildGoogleRequestUrl(
                 searchFormData.getSearchString(),
@@ -42,7 +42,7 @@ public class GoogleBookApi implements IBookApi {
         );
 
         GoogleBooksApiResponse jsonResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
-        List<Book> books = new ArrayList<>();
+        List<ThymeleafBook> books = new ArrayList<>();
         if (jsonResponse != null && jsonResponse.getTotalItems() > 0) {
             List<Item> foundItems = jsonResponse.getItems();
             for (Item item : foundItems) {
@@ -62,7 +62,7 @@ public class GoogleBookApi implements IBookApi {
                     isbn = volumeInfo.getIndustryIdentifiers().getFirst().getIdentifier();
                 }
 
-                Book book = new Book(
+                ThymeleafBook book = new ThymeleafBook(
                         isbn,
                         volumeInfo.getTitle(),
                         volumeInfo.getAuthors(),

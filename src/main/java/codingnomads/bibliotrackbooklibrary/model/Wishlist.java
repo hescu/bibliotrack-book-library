@@ -1,6 +1,6 @@
 package codingnomads.bibliotrackbooklibrary.model;
 
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.Book;
+import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +18,9 @@ public class Wishlist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    private Set<Book> wishlist;
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "wishlist_book",
+            joinColumns = @JoinColumn(name = "wishlist_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id"))
+    private Set<ThymeleafBook> wishlist;
 }

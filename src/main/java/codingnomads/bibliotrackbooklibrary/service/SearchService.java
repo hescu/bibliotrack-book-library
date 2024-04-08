@@ -1,8 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.dao.IBookApi;
-import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.Book;
+import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
 import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ public class SearchService {
     private IBookApi googleBookApi;
 
     @Loggable
-    public List<Book> performSearch(SearchFormData searchFormData) {
+    public List<ThymeleafBook> performSearch(SearchFormData searchFormData) {
         return googleBookApi.performSearch(searchFormData);
     }
 

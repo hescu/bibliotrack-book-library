@@ -1,10 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.model;
 
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.Book;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Set;
 
 @Entity
 @Getter
@@ -18,6 +15,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "wishlist_id", referencedColumnName = "id")
     private Wishlist wishlist;
 }

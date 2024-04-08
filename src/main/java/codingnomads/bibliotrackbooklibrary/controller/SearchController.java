@@ -1,9 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
-import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
 import codingnomads.bibliotrackbooklibrary.entity.response.Item;
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.Book;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
