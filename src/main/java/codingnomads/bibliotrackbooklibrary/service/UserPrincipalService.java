@@ -1,6 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.exception.UserExceptions;
+import codingnomads.bibliotrackbooklibrary.model.User;
 import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.mybatis.UserPrincipalMapper;
@@ -49,6 +50,7 @@ public class UserPrincipalService implements UserDetailsService {
         userPrincipal.setAccountNonLocked(true);
         userPrincipal.setCredentialsNonExpired(true);
         userPrincipal.setEnabled(true);
+        userPrincipal.setUser(new User());
 
         Optional<Authority> auth = authorityRepo.findById(1L);
         auth.ifPresent(authority -> userPrincipal

@@ -8,7 +8,6 @@ import lombok.*;
 @Setter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 public class User {
 
     @Id
@@ -18,4 +17,8 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "wishlist_id", referencedColumnName = "id")
     private Wishlist wishlist;
+
+    public User() {
+        wishlist = new Wishlist();
+    }
 }

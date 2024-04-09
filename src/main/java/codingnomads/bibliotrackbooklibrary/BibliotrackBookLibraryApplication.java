@@ -1,5 +1,7 @@
 package codingnomads.bibliotrackbooklibrary;
 
+import codingnomads.bibliotrackbooklibrary.model.User;
+import codingnomads.bibliotrackbooklibrary.model.Wishlist;
 import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.mybatis.UserPrincipalMapper;
@@ -55,6 +57,7 @@ public class BibliotrackBookLibraryApplication implements CommandLineRunner {
 			adminUser.setAccountNonLocked(true);
 			adminUser.setAccountNonExpired(true);
 			adminUser.setEnabled(true);
+			adminUser.setUser(new User());
 			userPrincipalRepo.save(adminUser);
 		}
 	}

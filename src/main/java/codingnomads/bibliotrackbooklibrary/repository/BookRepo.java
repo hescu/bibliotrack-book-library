@@ -1,7 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.repository;
 
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
+import codingnomads.bibliotrackbooklibrary.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface BookRepo extends JpaRepository<ThymeleafBook, Long> {
+public interface BookRepo extends JpaRepository<Book, Long> {
 }

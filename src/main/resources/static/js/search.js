@@ -6,14 +6,33 @@ $(document).ready(function() {
             url: $('#addToWishlistForm').attr('action'),
             data: formData,
             success: function(response) {
-                // Hier kannst du die Rückgabedaten verarbeiten, wenn die Anfrage erfolgreich war
-                // Zum Beispiel könntest du eine Benachrichtigung anzeigen oder die Suchergebnisse aktualisieren
-                console.log('Buch erfolgreich zur Wunschliste hinzugefügt.');
+                showNotification(response, 'success');
             },
             error: function(xhr, status, error) {
-                // Hier kannst du Fehlerbehandlung durchführen, wenn die Anfrage fehlschlägt
-                console.error('Fehler beim Hinzufügen des Buches zur Wunschliste:', error);
+                var errorMessage = xhr.responseText || 'An error occurred.';
+                showNotification(errorMessage, 'error');
             }
         });
     });
 });
+
+function showNotification(message, type) {
+        var notificationDiv = $('#notification');
+        notificationDiv.removeClass(); // Remove any existing classes
+        notificationDiv.text(message); // Set the message text
+
+        // Set the appropriate class for styling
+        if (type === 'success') {
+            notificationDiv.addClass('success');
+        } else if (type === 'error') {
+            notificationDiv.addClass('error');
+        }
+
+        // Show the notification
+        notificationDiv.show();
+
+        // Hide the notification after a certain time (e.g., 5 seconds)
+        setTimeout(function() {
+            notificationDiv.hide();
+        }, 5000); // 5000 milliseconds = 5 seconds
+    }
