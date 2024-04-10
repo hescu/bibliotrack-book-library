@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <main class="container">
+        <div class="wishlist-container">
+            <h3>Wishlist</h3>
+            <p th:if="${wishlist.isEmpty()}">Your wishlist is empty...</p>
+            <div th:unless="${wishlist.isEmpty()}">
+                <table>
+                    <thead>
+                        <tr>
+                           <th scope="col">ISBN</th>
+                           <th scope="col">Title</th>
+                           <th scope="col">Author(s)</th>
+                           <th scope="col">Publisher</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="book : ${wishlist}">
+                            <td th:text="${book.isbn}"></td>
+                            <td th:text="${book.title}"></td>
+                            <td th:each="author : ${book.authors}">
+                                <p th:text="${author}"></p>
+                            </td>
+                            <td th:text="${book.publisher != null} ? ${book.publisher} : 'unknown'"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

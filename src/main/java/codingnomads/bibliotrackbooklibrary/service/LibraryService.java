@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class LibraryService {
@@ -104,5 +105,13 @@ public class LibraryService {
                 .filter(book -> book.getIsbn().equals(isbn))
                 .findFirst();
          return optionalBook.orElse(null);
+    }
+
+    public Set<Book> fetchWishlist() {
+        User currentUser = getCurrentUser();
+        if (currentUser != null) {
+            return currentUser.getWishlist().getBooks();
+        }
+        return null;
     }
 }
