@@ -55,8 +55,9 @@
                                         <p th:text="'Pages: ' + ${item.pageCount}"></p>
                                     </div>
                                     <div>
-                                        <form id="addToWishlistForm" th:action="@{/my-library/wishlist/add}" th:object="${item}" th:method="post">
-                                            <button id="addToWishlistButton" type="button">Add to wishlist</button>
+                                        <form id="addToWishlistForm" th:action="@{/my-library/wishlist/add}" th:method="post">
+                                            <input type="hidden" id="bookId" name="bookId" th:value="${item.isbn}" />
+                                            <button id="addToWishlistButton" type="submit">Add to wishlist</button>
                                         </form>
                                     </div>
                                 </div>

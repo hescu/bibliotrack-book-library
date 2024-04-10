@@ -20,6 +20,9 @@
             <li class="nav-item" th:if="${#authorization.expression('isAuthenticated()') and #authorization.expression('hasRole(''ADMIN'')')}">
                 <a class="nav-link contrast button" th:href="@{/admin}">Admin</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link contrast button" th:href="@{/my-library}">My Library</a>
+            </li>
         </ul>
         <div class="login-container">
             <div th:if="${not #authorization.expression('isAuthenticated()')}">

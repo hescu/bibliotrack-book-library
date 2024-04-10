@@ -2,6 +2,7 @@ package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
 import codingnomads.bibliotrackbooklibrary.entity.response.Item;
+import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class SearchController {
 
     @GetMapping()
     public String displaySearchPage(Model model) {
-        List<Item> emptyList = new ArrayList<>();
+        List<ThymeleafBook> emptyList = new ArrayList<>();
         model.addAttribute("searchResults", emptyList);
         model.addAttribute("searchFormData", new SearchFormData());
         return "search";

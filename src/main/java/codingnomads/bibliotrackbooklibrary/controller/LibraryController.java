@@ -1,15 +1,13 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
+import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/my-library")
@@ -18,14 +16,15 @@ public class LibraryController {
     @Autowired
     private LibraryService libraryService;
 
+    @Loggable
     @PostMapping("/wishlist/add")
     @ResponseBody
-    public ResponseEntity<String> addBookToWishlist(@ModelAttribute("item") ThymeleafBook book) {
+    public ResponseEntity<String> addBookToWishlist(@RequestParam("bookId") String isbn) {
         try {
-            libraryService.addBookToWishlist(book);
+            libraryService.addBookToWishlist(isbn);
             return ResponseEntity.ok("Book added to wishlist successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add book to wishlist.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add book to wishlist." + e.getMessage());
         }
     }
 }

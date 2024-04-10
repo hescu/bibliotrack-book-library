@@ -9,13 +9,18 @@ import codingnomads.bibliotrackbooklibrary.mybatis.UserMapper;
 import codingnomads.bibliotrackbooklibrary.repository.BookRepo;
 import codingnomads.bibliotrackbooklibrary.repository.UserRepo;
 import codingnomads.bibliotrackbooklibrary.repository.WishlistRepo;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LibraryService {
@@ -32,18 +37,23 @@ public class LibraryService {
     @Autowired
     private UserMapper userMapper;
 
-    public void addBookToWishlist(ThymeleafBook thymeleafBook) {
-        Book book = convertToBookEntity(thymeleafBook);
-        User currentUser = getCurrentUser();
-        if (currentUser != null) {
-            Wishlist wishlist = currentUser.getWishlist();
-            if (wishlist == null) {
-                wishlist = new Wishlist();
-                wishlist.setBooks(new HashSet<>());
-                currentUser.setWishlist(wishlist);
+    @Autowired
+    private CacheManager cacheManager;
+
+    @Transactional
+    public void addBookToWishlist(String isbn) {
+        try {
+            ThymeleafBook thymeleafBookFromCache = getThymeleafBooksFromCache("searchResultsCache", "Dan Abnett|author", isbn);
+            Book book = convertToBookEntity(thymeleafBookFromCache);
+            System.out.println("**********************************************" + book.toString());
+            User currentUser = getCurrentUser();
+            if (currentUser != null) {
+                Wishlist wishlist = currentUser.getWishlist();
+                wishlist.getBooks().add(book);
+                userRepo.save(currentUser);
             }
-            wishlist.getBooks().add(book);
-            userRepo.save(currentUser);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -70,5 +80,29 @@ public class LibraryService {
             }
         }
         return null;
+    }
+
+    private ThymeleafBook getThymeleafBooksFromCache(String cacheName, String key, String isbn) {
+        Cache cache = cacheManager.getCache(cacheName);
+        if (cache != null) {
+            Cache.ValueWrapper wrapper = cache.get(key);
+            if (wrapper != null) {
+                Object cachedObject = wrapper.get();
+                if (cachedObject instanceof List<?> cachedList) {
+                    if (!cachedList.isEmpty() && cachedList.getFirst() instanceof ThymeleafBook) {
+                        List<ThymeleafBook> cachedBookList = (List<ThymeleafBook>) cachedList;
+                        return findBookByIsbn(cachedBookList, isbn);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private ThymeleafBook findBookByIsbn(List<ThymeleafBook> bookList, String isbn) {
+         Optional<ThymeleafBook> optionalBook = bookList.stream()
+                .filter(book -> book.getIsbn().equals(isbn))
+                .findFirst();
+         return optionalBook.orElse(null);
     }
 }
