@@ -45,7 +45,6 @@ public class SearchControllerTests {
     public void performSearch_Success() throws Exception {
         String searchText = "test";
         String searchCriteria = "default";
-        int page = 1;
 
         SearchFormData searchFormData = SearchFormData.builder()
                 .searchString(searchText)
