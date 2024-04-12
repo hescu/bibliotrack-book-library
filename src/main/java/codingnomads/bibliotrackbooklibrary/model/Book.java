@@ -24,6 +24,8 @@ public class Book {
     private String thumbnail;
     private String publisher;
     private String publishedDate;
+
+    @Lob
     private String description;
     private int pageCount;
 
