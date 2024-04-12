@@ -1,26 +1,28 @@
 package codingnomads.bibliotrackbooklibrary;
 
-import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
-import codingnomads.bibliotrackbooklibrary.entity.response.ImageLinks;
-import codingnomads.bibliotrackbooklibrary.entity.response.Item;
-import codingnomads.bibliotrackbooklibrary.entity.response.VolumeInfo;
+import codingnomads.bibliotrackbooklibrary.controller.SearchController;
+import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
+import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -30,47 +32,53 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Profile("test")
 public class SearchControllerTests {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private SearchService searchService;
 
-//    @Test
-//    public void performSearch_Success() throws Exception {
-//        String searchText = "test";
-//        String searchCriteria = "default";
-//        int page = 1;
-//        GoogleBooksApiResponse testGoogleBooksApiResponse = new GoogleBooksApiResponse();
-//
-//        Item item = Item.builder()
-//                .volumeInfo(VolumeInfo.builder()
-//                        .authors(List.of(""))
-//                        .description("")
-//                        .title("")
-//                        .imageLinks(ImageLinks.builder()
-//                                .thumbnail("")
-//                                .build())
-//                        .publishedDate("")
-//                        .publisher("")
-//                        .build())
-//                .build();
-//        List<Item> searchResults = new ArrayList<>();
-//        searchResults.add(item);
-//        testGoogleBooksApiResponse.setItems(searchResults);
-//
-//        when(searchService.performSearch(searchText, searchCriteria, page)).thenReturn(testGoogleBooksApiResponse);
-//        when(searchService.calculateTotalPages(1, 10)).thenReturn(1);
-//
-//        mockMvc.perform(get("/search/google-books-api")
-//                        .param("searchText", searchText)
-//                        .param("searchCriteria", searchCriteria))
-//                .andExpect(status().isOk())
-//                .andExpect(model().attribute("totalItemsFound", testGoogleBooksApiResponse.getTotalItems()))
-//                .andExpect(model().attribute("searchResults", searchResults))
-//                .andExpect(model().attribute("currentPage", page))
-//                .andExpect(model().attribute("totalPages", 1));
-//
-//        verify(searchService, times(1)).performSearch(searchText, searchCriteria, page);
-//    }
+    @Mock
+    private View view;
+
+    @InjectMocks
+    private SearchController searchController;
+
+    @Test
+    public void performSearch_Success() throws Exception {
+        String searchText = "test";
+        String searchCriteria = "default";
+        int page = 1;
+
+        Model model = mock(Model.class);
+
+        SearchFormData searchFormData = SearchFormData.builder()
+                .searchString(searchText)
+                .searchCriteria(searchCriteria)
+                .build();
+
+        ThymeleafBook thymeleafBook = ThymeleafBook.builder()
+                        .isbn("")
+                        .authors(List.of(""))
+                        .description("")
+                        .title("")
+                        .thumbnail("")
+                        .publishedDate("")
+                        .publisher("")
+                        .build();
+
+        List<ThymeleafBook> searchResults = new ArrayList<>();
+        searchResults.add(thymeleafBook);
+
+        when(searchService.performSearch(searchFormData)).thenReturn(searchResults);
+
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(searchController)
+                        .setSingleView(view)
+                        .build();
+
+        mockMvc.perform(post("/search")
+                        .flashAttr("searchFormData", searchFormData))
+                        .andExpect(status().isOk())
+                        .andExpect(model().attributeExists("searchResults"))
+                        .andExpect(view().name("search"));
+
+        verify(searchService).performSearch(searchFormData);
+    }
 }

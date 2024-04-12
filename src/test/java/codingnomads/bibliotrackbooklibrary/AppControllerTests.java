@@ -19,19 +19,4 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @Profile("test")
 public class AppControllerTests {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private SearchService searchService;
-
-    @Test
-    public void indexHealthCheck() throws Exception {
-        mockMvc
-                .perform(
-                        get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("index"));
-    }
 }

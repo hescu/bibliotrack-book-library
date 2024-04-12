@@ -20,9 +20,6 @@ public class SearchController {
     @Autowired
     SearchService searchService;
 
-    @Autowired
-    GoogleBookApi googleBookApi;
-
     @GetMapping()
     public String displaySearchPage(Model model) {
         List<ThymeleafBook> emptyList = new ArrayList<>();
