@@ -47,6 +47,10 @@ public class BibliotrackBookLibraryApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		if (authorityRepo.findAll().isEmpty()) {
+
+		}
+
 		if (userPrincipalMapper.findByUsername("admin").isEmpty()) {
 			UserPrincipal adminUser = new UserPrincipal();
 			Authority authority = authorityRepo.getReferenceById(2L);
