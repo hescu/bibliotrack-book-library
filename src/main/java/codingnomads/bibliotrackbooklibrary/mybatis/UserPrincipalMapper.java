@@ -11,18 +11,18 @@ import java.util.Optional;
 public interface UserPrincipalMapper {
 
     @Select("SELECT COUNT(username) " +
-            "FROM user_principal " +
+            "FROM userprincipal " +
             "WHERE username = #{param1};")
     int countUsernames(String username);
 
     @Select("SELECT * " +
-            "FROM user_principal " +
+            "FROM userprincipal " +
             "WHERE username = #{param1};")
     Optional<UserPrincipal> findByUsername(String username);
 
-    @Delete("DELETE FROM user_authority_join_table WHERE user_id = #{id};")
+    @Delete("DELETE FROM userprincipal_authority WHERE user_id = #{id};")
     int deleteFromUserAuthorityJoinTableById(Long id);
 
-    @Delete("DELETE FROM user_principal WHERE id = #{id}")
+    @Delete("DELETE FROM userprincipal WHERE id = #{id}")
     int deleteUserPrincipalById(Long id);
 }

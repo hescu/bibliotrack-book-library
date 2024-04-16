@@ -4,7 +4,7 @@ USE bibliotrack_test;
 
 CREATE TABLE IF NOT EXISTS authority (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    role VARCHAR(255) NOT NULL
+    authority ENUM('ROLE_ADMIN', 'ROLE_USER') NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS wishlist (
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS wishlist_book (
     FOREIGN KEY (book_id) REFERENCES book(id)
 );
 
-CREATE TABLE IF NOT EXISTS user_authority_join_table (
+CREATE TABLE IF NOT EXISTS userprincipal_authority (
     userprincipal_id BIGINT NOT NULL,
     authority_id BIGINT NOT NULL,
     PRIMARY KEY (userprincipal_id, authority_id),
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS user_authority_join_table (
     FOREIGN KEY (authority_id) REFERENCES authority(id)
 );
 
-INSERT INTO authority (role) VALUES ('ROLE_ADMIN'), ('ROLE_USER');
+INSERT INTO authority (authority) VALUES ('ROLE_ADMIN'), ('ROLE_USER');
 
 INSERT INTO wishlist VALUES (DEFAULT);
 
@@ -72,5 +72,5 @@ VALUES ('admin', '$2a$10$fvd41HJNVoQlf5WTw2RTUObUNs5fwqBnCGF3wWN42qU5lO284/AXG',
 
 SET @admin_user_id = LAST_INSERT_ID();
 
-INSERT INTO user_authority_join_table (userprincipal_id, authority_id)
-SELECT @admin_user_id, id FROM authority WHERE role = 'ROLE_ADMIN';
+INSERT INTO userprincipal_authority (userprincipal_id, authority_id)
+SELECT @admin_user_id, id FROM authority WHERE authority = 'ROLE_ADMIN';

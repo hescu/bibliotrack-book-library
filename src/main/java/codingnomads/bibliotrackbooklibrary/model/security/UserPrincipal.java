@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 
 @Entity
-@Table(name = "user_principal")
+@Table(name = "userprincipal")
 @Getter
 @Setter
 @Builder
@@ -30,8 +30,8 @@ public class UserPrincipal implements UserDetails {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @JoinTable(name = "user_authority_join_table",
-            joinColumns = @JoinColumn(name = "user_id"),
+    @JoinTable(name = "userprincipal_authority",
+            joinColumns = @JoinColumn(name = "userprincipal_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
     private List<Authority> authorities;
@@ -48,8 +48,8 @@ public class UserPrincipal implements UserDetails {
     @Column(nullable = false)
     private boolean enabled;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
 
     public UserPrincipal(String username, String password, List<Authority> authorities) {
