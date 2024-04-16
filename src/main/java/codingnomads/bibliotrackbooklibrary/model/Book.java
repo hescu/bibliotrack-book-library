@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
 @Builder
@@ -14,8 +13,6 @@ import java.util.List;
 @ToString
 public class Book {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String isbn;
@@ -25,10 +22,19 @@ public class Book {
     private String publisher;
     private String publishedDate;
 
-    @Lob
     private String description;
     private int pageCount;
 
-    @ManyToMany(mappedBy = "books")
     private List<Wishlist> wishlists;
+
+    public Book(String isbn, String title, List<String> authors, String thumbnail, String publisher, String publishedDate, String description, int pageCount) {
+        this.isbn = isbn;
+        this.title = title;
+        this.authors = authors;
+        this.thumbnail = thumbnail;
+        this.publisher = publisher;
+        this.publishedDate = publishedDate;
+        this.description = description;
+        this.pageCount = pageCount;
+    }
 }

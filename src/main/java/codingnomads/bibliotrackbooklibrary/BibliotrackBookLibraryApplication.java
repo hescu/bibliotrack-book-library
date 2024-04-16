@@ -22,19 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SpringBootApplication
-public class BibliotrackBookLibraryApplication implements CommandLineRunner {
-
-	@Autowired
-	private UserPrincipalRepo userPrincipalRepo;
-
-	@Autowired
-	private AuthorityRepo authorityRepo;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
-	private UserPrincipalMapper userPrincipalMapper;
+public class BibliotrackBookLibraryApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(BibliotrackBookLibraryApplication.class, args);
@@ -43,27 +31,5 @@ public class BibliotrackBookLibraryApplication implements CommandLineRunner {
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.build();
-	}
-
-	@Override
-	public void run(String... args) throws Exception {
-		if (authorityRepo.findAll().isEmpty()) {
-
-		}
-
-		if (userPrincipalMapper.findByUsername("admin").isEmpty()) {
-			UserPrincipal adminUser = new UserPrincipal();
-			Authority authority = authorityRepo.getReferenceById(2L);
-
-			adminUser.setUsername("admin");
-			adminUser.setPassword(passwordEncoder.encode("admin"));
-			adminUser.setAuthorities(Collections.singletonList(authority));
-			adminUser.setCredentialsNonExpired(true);
-			adminUser.setAccountNonLocked(true);
-			adminUser.setAccountNonExpired(true);
-			adminUser.setEnabled(true);
-			adminUser.setUser(new User());
-			userPrincipalRepo.save(adminUser);
-		}
 	}
 }

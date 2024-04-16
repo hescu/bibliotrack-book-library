@@ -1,7 +1,7 @@
 package codingnomads.bibliotrackbooklibrary;
 
 import codingnomads.bibliotrackbooklibrary.controller.SearchController;
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
+import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ public class ControllerTests {
                 .searchCriteria(searchCriteria)
                 .build();
 
-        ThymeleafBook thymeleafBook = ThymeleafBook.builder()
+        Book book = Book.builder()
                         .isbn("")
                         .authors(List.of(""))
                         .description("")
@@ -58,8 +58,8 @@ public class ControllerTests {
                         .publisher("")
                         .build();
 
-        List<ThymeleafBook> searchResults = new ArrayList<>();
-        searchResults.add(thymeleafBook);
+        List<Book> searchResults = new ArrayList<>();
+        searchResults.add(book);
 
         when(searchService.performSearch(searchFormData)).thenReturn(searchResults);
 
