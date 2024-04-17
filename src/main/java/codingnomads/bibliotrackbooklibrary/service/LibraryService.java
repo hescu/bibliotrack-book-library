@@ -1,6 +1,6 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
+import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.User;
 import codingnomads.bibliotrackbooklibrary.model.Wishlist;
@@ -15,10 +15,8 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,35 +39,22 @@ public class LibraryService {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    private GoogleBookApi googleBookApi;
+
     @Transactional
     public void addBookToWishlist(String isbn) {
         try {
-            ThymeleafBook thymeleafBookFromCache = getThymeleafBooksFromCache("searchResultsCache", "Dan Abnett|author", isbn);
-            Book book = convertToBookEntity(thymeleafBookFromCache);
-            System.out.println("**********************************************" + book.toString());
+//            Book bookFromCache = getBooksFromCache("searchResultsCache", "Dan Abnett|author", isbn);
             User currentUser = getCurrentUser();
             if (currentUser != null) {
                 Wishlist wishlist = currentUser.getWishlist();
-                wishlist.getBooks().add(book);
+                wishlist.getBooks().add(googleBookApi.searchBookByIsbn(isbn));
                 userRepo.save(currentUser);
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    private Book convertToBookEntity(ThymeleafBook thymeleafBook) {
-        Book book = new Book();
-        book.setIsbn(thymeleafBook.getIsbn());
-        book.setTitle(thymeleafBook.getTitle());
-        book.setAuthors(thymeleafBook.getAuthors());
-        book.setThumbnail(thymeleafBook.getThumbnail());
-        book.setPublisher(thymeleafBook.getPublisher());
-        book.setPublishedDate(thymeleafBook.getPublishedDate());
-        book.setDescription(thymeleafBook.getDescription());
-        book.setPageCount(thymeleafBook.getPageCount());
-
-        return book;
     }
 
     private User getCurrentUser() {
@@ -83,15 +68,15 @@ public class LibraryService {
         return null;
     }
 
-    private ThymeleafBook getThymeleafBooksFromCache(String cacheName, String key, String isbn) {
+    private Book getBooksFromCache(String cacheName, String key, String isbn) {
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
             Cache.ValueWrapper wrapper = cache.get(key);
             if (wrapper != null) {
                 Object cachedObject = wrapper.get();
                 if (cachedObject instanceof List<?> cachedList) {
-                    if (!cachedList.isEmpty() && cachedList.getFirst() instanceof ThymeleafBook) {
-                        List<ThymeleafBook> cachedBookList = (List<ThymeleafBook>) cachedList;
+                    if (!cachedList.isEmpty() && cachedList.getFirst() instanceof Book) {
+                        List<Book> cachedBookList = (List<Book>) cachedList;
                         return findBookByIsbn(cachedBookList, isbn);
                     }
                 }
@@ -100,8 +85,8 @@ public class LibraryService {
         return null;
     }
 
-    private ThymeleafBook findBookByIsbn(List<ThymeleafBook> bookList, String isbn) {
-         Optional<ThymeleafBook> optionalBook = bookList.stream()
+    private Book findBookByIsbn(List<Book> bookList, String isbn) {
+         Optional<Book> optionalBook = bookList.stream()
                 .filter(book -> book.getIsbn().equals(isbn))
                 .findFirst();
          return optionalBook.orElse(null);

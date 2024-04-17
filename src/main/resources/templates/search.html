@@ -56,7 +56,7 @@
                                     </div>
                                     <div>
                                         <form id="addToWishlistForm" th:action="@{/my-library/wishlist/add}" th:method="post">
-                                            <input type="hidden" id="bookId" name="bookId" th:value="${item.isbn}" />
+                                            <input type="hidden" name="isbn" th:value="${item.isbn}" />
                                             <button id="addToWishlistButton" type="submit">Add to wishlist</button>
                                         </form>
                                     </div>

@@ -1,6 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.logging.Loggable;
+import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class LibraryController {
     @Loggable
     @PostMapping("/wishlist/add")
     @ResponseBody
-    public ResponseEntity<String> addBookToWishlist(@RequestParam("bookId") String isbn) {
+    public ResponseEntity<String> addBookToWishlist(@RequestParam("isbn") String isbn) {
         try {
             libraryService.addBookToWishlist(isbn);
             return ResponseEntity.ok("Book added to wishlist successfully.");

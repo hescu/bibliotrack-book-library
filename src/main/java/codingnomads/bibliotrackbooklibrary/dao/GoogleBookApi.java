@@ -3,7 +3,7 @@ package codingnomads.bibliotrackbooklibrary.dao;
 import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
 import codingnomads.bibliotrackbooklibrary.entity.response.Item;
 import codingnomads.bibliotrackbooklibrary.entity.response.VolumeInfo;
-import codingnomads.bibliotrackbooklibrary.entity.thymeleaf.ThymeleafBook;
+import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class GoogleBookApi implements IBookApi {
     RestTemplate restTemplate;
 
     @Override
-    public List<ThymeleafBook> performSearch(SearchFormData searchFormData) {
+    public List<Book> performSearch(SearchFormData searchFormData) {
         GoogleBooksApiResponse resultResponse = new GoogleBooksApiResponse();
         String requestUrl = buildGoogleRequestUrl(
                 searchFormData.getSearchString(),
@@ -42,7 +42,7 @@ public class GoogleBookApi implements IBookApi {
         );
 
         GoogleBooksApiResponse jsonResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
-        List<ThymeleafBook> books = new ArrayList<>();
+        List<Book> books = new ArrayList<>();
         if (jsonResponse != null && jsonResponse.getTotalItems() > 0) {
             List<Item> foundItems = jsonResponse.getItems();
             for (Item item : foundItems) {
@@ -52,32 +52,58 @@ public class GoogleBookApi implements IBookApi {
                     continue;
                 }
 
-                String thumbnail = null;
-                if (volumeInfo.getImageLinks() != null) {
-                    thumbnail = volumeInfo.getImageLinks().getThumbnail();
-                }
-
-                String isbn = null;
-                if (volumeInfo.getIndustryIdentifiers() != null) {
-                    isbn = volumeInfo.getIndustryIdentifiers().getFirst().getIdentifier();
-                }
-
-                ThymeleafBook book = new ThymeleafBook(
-                        isbn,
-                        volumeInfo.getTitle(),
-                        volumeInfo.getAuthors(),
-                        thumbnail,
-                        volumeInfo.getPublisher(),
-                        volumeInfo.getPublishedDate(),
-                        volumeInfo.getDescription(),
-                        volumeInfo.getPageCount()
-                );
+                Book book = getBook(volumeInfo);
                 books.add(book);
             }
             return books;
         } else {
             return books;
         }
+    }
+
+    @Override
+    public Book searchBookByIsbn(String isbn) {
+        final String ENDPOINT_ISBN_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?q=isbn:%s&key=%s";
+        String requestUrl = String.format(ENDPOINT_ISBN_SEARCH, isbn, googleBooksApiKey);
+        GoogleBooksApiResponse googleBooksApiResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
+        List<Book> books = new ArrayList<>();
+        if (googleBooksApiResponse != null && googleBooksApiResponse.getTotalItems() > 0) {
+            List<Item> foundItems = googleBooksApiResponse.getItems();
+            for (Item item : foundItems) {
+                VolumeInfo volumeInfo = item.getVolumeInfo();
+                if (volumeInfo == null) {
+                    continue;
+                }
+                Book book = getBook(volumeInfo);
+                books.add(book);
+            }
+            return books.getFirst();
+        } else {
+            return null;
+        }
+    }
+
+    private static Book getBook(VolumeInfo volumeInfo) {
+        String thumbnail = null;
+        if (volumeInfo.getImageLinks() != null) {
+            thumbnail = volumeInfo.getImageLinks().getThumbnail();
+        }
+
+        String isbn = null;
+        if (volumeInfo.getIndustryIdentifiers() != null) {
+            isbn = volumeInfo.getIndustryIdentifiers().getFirst().getIdentifier();
+        }
+
+        return new Book(
+                isbn,
+                volumeInfo.getTitle(),
+                volumeInfo.getAuthors(),
+                thumbnail,
+                volumeInfo.getPublisher(),
+                volumeInfo.getPublishedDate(),
+                volumeInfo.getDescription(),
+                volumeInfo.getPageCount()
+        );
     }
 
     private String buildGoogleRequestUrl(String searchText, String searchCriteria, int startIndex, int maxResults) {

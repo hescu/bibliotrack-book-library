@@ -37,4 +37,15 @@ public class Book {
 
     @ManyToMany(mappedBy = "books")
     private List<Wishlist> wishlists;
+
+    public Book(String isbn, String title, List<String> authors, String thumbnail, String publisher, String publishedDate, String description, int pageCount) {
+        this.isbn = isbn;
+        this.title = title;
+        this.authors = authors;
+        this.thumbnail = thumbnail;
+        this.publisher = publisher;
+        this.publishedDate = publishedDate;
+        this.description = description;
+        this.pageCount = pageCount;
+    }
 }
