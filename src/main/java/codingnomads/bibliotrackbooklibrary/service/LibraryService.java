@@ -1,23 +1,24 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
+import codingnomads.bibliotrackbooklibrary.exception.LibraryEntityExceptions;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.User;
 import codingnomads.bibliotrackbooklibrary.model.Wishlist;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
+import codingnomads.bibliotrackbooklibrary.mybatis.LibraryMapper;
 import codingnomads.bibliotrackbooklibrary.mybatis.UserMapper;
 import codingnomads.bibliotrackbooklibrary.repository.BookRepo;
 import codingnomads.bibliotrackbooklibrary.repository.UserRepo;
 import codingnomads.bibliotrackbooklibrary.repository.WishlistRepo;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ public class LibraryService {
     private UserMapper userMapper;
 
     @Autowired
-    private CacheManager cacheManager;
+    private LibraryMapper libraryMapper;
 
     @Autowired
     private GoogleBookApi googleBookApi;
@@ -45,7 +46,6 @@ public class LibraryService {
     @Transactional
     public void addBookToWishlist(String isbn) {
         try {
-//            Book bookFromCache = getBooksFromCache("searchResultsCache", "Dan Abnett|author", isbn);
             User currentUser = getCurrentUser();
             if (currentUser != null) {
                 Wishlist wishlist = currentUser.getWishlist();
@@ -54,6 +54,18 @@ public class LibraryService {
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Transactional
+    public Wishlist removeBookFromWishlist(Long bookId) {
+        try {
+            Long wishlistId = Objects.requireNonNull(getCurrentUser()).getWishlist().getId();
+            libraryMapper.removeBookFromWishlist(wishlistId, bookId);
+            Optional<Wishlist> optionalWishlist = wishlistRepo.findById(wishlistId);
+             return optionalWishlist.orElseThrow();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to remove book from wishlist: " + e.getMessage());
         }
     }
 
@@ -68,31 +80,7 @@ public class LibraryService {
         return null;
     }
 
-    private Book getBooksFromCache(String cacheName, String key, String isbn) {
-        Cache cache = cacheManager.getCache(cacheName);
-        if (cache != null) {
-            Cache.ValueWrapper wrapper = cache.get(key);
-            if (wrapper != null) {
-                Object cachedObject = wrapper.get();
-                if (cachedObject instanceof List<?> cachedList) {
-                    if (!cachedList.isEmpty() && cachedList.getFirst() instanceof Book) {
-                        List<Book> cachedBookList = (List<Book>) cachedList;
-                        return findBookByIsbn(cachedBookList, isbn);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private Book findBookByIsbn(List<Book> bookList, String isbn) {
-         Optional<Book> optionalBook = bookList.stream()
-                .filter(book -> book.getIsbn().equals(isbn))
-                .findFirst();
-         return optionalBook.orElse(null);
-    }
-
-    public Set<Book> fetchWishlist() {
+    public Set<Book> fetchBooksFromWishlist() {
         User currentUser = getCurrentUser();
         if (currentUser != null) {
             return currentUser.getWishlist().getBooks();

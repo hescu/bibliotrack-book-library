@@ -30,6 +30,12 @@
                                 <div th:text="${author}"></div>
                             </td>
                             <td th:text="${book.publisher != null} ? ${book.publisher} : 'unknown'"></td>
+                            <td>
+                                <form id="deleteFromWishlistForm" th:action="@{/my-library/wishlist/delete}" th:method="post">
+                                    <input type="hidden" name="bookId" th:value="${book.id}" />
+                                    <button type="submit" id="deleteFromWishlistButton">Remove from Wishlist</button>
+                                </form>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

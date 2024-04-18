@@ -33,7 +33,6 @@ public class GoogleBookApi implements IBookApi {
 
     @Override
     public List<Book> performSearch(SearchFormData searchFormData) {
-        GoogleBooksApiResponse resultResponse = new GoogleBooksApiResponse();
         String requestUrl = buildGoogleRequestUrl(
                 searchFormData.getSearchString(),
                 searchFormData.getSearchCriteria(),
@@ -41,43 +40,16 @@ public class GoogleBookApi implements IBookApi {
                 searchFormData.getMaxResults()
         );
 
-        GoogleBooksApiResponse jsonResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
-        List<Book> books = new ArrayList<>();
-        if (jsonResponse != null && jsonResponse.getTotalItems() > 0) {
-            List<Item> foundItems = jsonResponse.getItems();
-            for (Item item : foundItems) {
-                VolumeInfo volumeInfo = item.getVolumeInfo();
-
-                if (volumeInfo == null) {
-                    continue;
-                }
-
-                Book book = getBook(volumeInfo);
-                books.add(book);
-            }
-            return books;
-        } else {
-            return books;
-        }
+        return sendRequest(requestUrl);
     }
 
     @Override
     public Book searchBookByIsbn(String isbn) {
         final String ENDPOINT_ISBN_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?q=isbn:%s&key=%s";
         String requestUrl = String.format(ENDPOINT_ISBN_SEARCH, isbn, googleBooksApiKey);
-        GoogleBooksApiResponse googleBooksApiResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
-        List<Book> books = new ArrayList<>();
-        if (googleBooksApiResponse != null && googleBooksApiResponse.getTotalItems() > 0) {
-            List<Item> foundItems = googleBooksApiResponse.getItems();
-            for (Item item : foundItems) {
-                VolumeInfo volumeInfo = item.getVolumeInfo();
-                if (volumeInfo == null) {
-                    continue;
-                }
-                Book book = getBook(volumeInfo);
-                books.add(book);
-            }
-            return books.getFirst();
+        List<Book> foundBooks = sendRequest(requestUrl);
+        if (foundBooks != null) {
+            return foundBooks.getFirst();
         } else {
             return null;
         }
@@ -112,5 +84,23 @@ public class GoogleBookApi implements IBookApi {
         String searchTerm = searchCriteriaToGoogleQueryCriteria.get(searchCriteria);
 
         return String.format(ENDPOINT_GOOGLE_SEARCH, startIndex, maxResults, LANGUAGE_RESTRICTION, searchTerm, searchText, googleBooksApiKey);
+    }
+
+    private List<Book> sendRequest(String requestUrl) {
+        GoogleBooksApiResponse googleBooksApiResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
+        List<Book> books = new ArrayList<>();
+        if (googleBooksApiResponse != null && googleBooksApiResponse.getTotalItems() > 0) {
+            List<Item> foundItems = googleBooksApiResponse.getItems();
+            for (Item item : foundItems) {
+                VolumeInfo volumeInfo = item.getVolumeInfo();
+                if (volumeInfo == null) {
+                    continue;
+                }
+                Book book = getBook(volumeInfo);
+                books.add(book);
+            }
+            return books;
+        }
+        return null;
     }
 }
