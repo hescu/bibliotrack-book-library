@@ -46,9 +46,14 @@ public class LibraryService {
         try {
             User currentUser = getCurrentUser();
             if (currentUser != null) {
-                Wishlist wishlist = currentUser.getWishlist();
-                wishlist.getBooks().add(googleBookApi.searchBookByIsbn(isbn));
-                userRepo.save(currentUser);
+                Wishlist wishlist = getCurrentUserWishlist(currentUser.getWishlist().getId());
+                Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
+                if (bookFromDb != null) {
+                    wishlist.getBooks().add(bookFromDb);
+                } else {
+                    wishlist.getBooks().add(googleBookApi.searchBookByIsbn(isbn));
+                }
+                wishlistRepo.save(wishlist);
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -87,5 +92,10 @@ public class LibraryService {
             }
         }
         return null;
+    }
+
+    private Wishlist getCurrentUserWishlist(Long wishlistId) {
+        Optional<Wishlist> optionalWishlist = wishlistRepo.findById(wishlistId);
+        return optionalWishlist.orElse(null);
     }
 }

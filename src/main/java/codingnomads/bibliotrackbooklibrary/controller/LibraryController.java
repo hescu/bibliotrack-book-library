@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/my-library")
@@ -24,17 +25,17 @@ public class LibraryController {
 
     @Loggable
     @PostMapping("/wishlist/add")
-    public ModelAndView addBookToWishlist(@RequestParam("isbn") String isbn) {
-        ModelAndView modelAndView = new ModelAndView();
+    public ModelAndView addBookToWishlist(@RequestParam("isbn") String isbn, RedirectAttributes redirectAttributes) {
         try {
             libraryService.addBookToWishlist(isbn);
-            modelAndView.setViewName("redirect:/search");
-            modelAndView.addObject("message", "Book added to wishlist successfully.");
+            redirectAttributes.addFlashAttribute("message", "Book added to wishlist successfully.");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+            return new ModelAndView("redirect:/search");
         } catch (Exception e) {
-            modelAndView.setViewName("redirect:/error");
-            modelAndView.addObject("message", "Failed to add book to wishlist: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("message", "Failed to add book to wishlist: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return new ModelAndView("redirect:/error");
         }
-        return modelAndView;
     }
 
     @PostMapping("/wishlist/delete")
