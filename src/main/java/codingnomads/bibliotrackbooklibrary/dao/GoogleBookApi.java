@@ -33,6 +33,7 @@ public class GoogleBookApi implements IBookApi {
 
     @Override
     public List<Book> performSearch(SearchFormData searchFormData) {
+        System.out.println("PREFORMING SEARCH  =======================================");
         String requestUrl = buildGoogleRequestUrl(
                 searchFormData.getSearchString(),
                 searchFormData.getSearchCriteria(),
@@ -87,7 +88,15 @@ public class GoogleBookApi implements IBookApi {
     }
 
     private List<Book> sendRequest(String requestUrl) {
-        GoogleBooksApiResponse googleBooksApiResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
+        System.out.println("GETTING RESULTS FROM GOOGLE  =======================================");
+
+        GoogleBooksApiResponse googleBooksApiResponse;
+        try {
+            googleBooksApiResponse = restTemplate.getForObject(requestUrl, GoogleBooksApiResponse.class);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ArrayList<>();
+        }
         List<Book> books = new ArrayList<>();
         if (googleBooksApiResponse != null && googleBooksApiResponse.getTotalItems() > 0) {
             List<Item> foundItems = googleBooksApiResponse.getItems();
@@ -101,6 +110,8 @@ public class GoogleBookApi implements IBookApi {
             }
             return books;
         }
+
+        System.out.println("RETURNING NULL  =======================================");
         return null;
     }
 }

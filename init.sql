@@ -72,5 +72,10 @@ VALUES ('admin', '$2a$10$fvd41HJNVoQlf5WTw2RTUObUNs5fwqBnCGF3wWN42qU5lO284/AXG',
 
 SET @admin_user_id = LAST_INSERT_ID();
 
+SELECT @wishlist_id, @admin_user_id;
+
+SELECT * FROM userprincipal;
+
 INSERT INTO userprincipal_authority (userprincipal_id, authority_id)
 SELECT @admin_user_id, id FROM authority WHERE authority = 'ROLE_ADMIN';
+

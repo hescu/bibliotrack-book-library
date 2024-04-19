@@ -6,6 +6,7 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - redis
     environment:
       - DB_ROOT_PW=${DB_ROOT_PW}
       - GOOGLE_BOOKS_API_KEY=${GOOGLE_BOOKS_API_KEY}
@@ -17,9 +18,20 @@ services:
       MYSQL_DATABASE: bibliotrack
     volumes:
       - mysql-data:/var/lib/mysql
-      - - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3306:3306"
 
+  redis:
+    image: redis
+    hostname: redis
+    restart: always
+    volumes:
+      - redis:/data
+    ports:
+      - "6379:6379"
+
 volumes:
   mysql-data:
+  redis:
+    driver: local

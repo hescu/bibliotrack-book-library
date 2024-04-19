@@ -51,7 +51,7 @@ public class UserPrincipalService implements UserDetailsService {
         userPrincipal.setEnabled(true);
         userPrincipal.setUser(new User());
 
-        Optional<Authority> auth = authorityRepo.findById(1L);
+        Optional<Authority> auth = authorityRepo.findById(2L);
         auth.ifPresent(authority -> userPrincipal
                 .setAuthorities(Collections
                 .singletonList(authority))

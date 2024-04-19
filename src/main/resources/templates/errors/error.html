@@ -6,11 +6,11 @@
     <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet" crossorigin="anonymous">
 </head>
 <body>
-    <div th:replace="~{/fragments/header :: header}"></div>
+    <div th:replace="~{fragments/header :: header}"></div>
     <main class="container">
         <p>Something went wrong...</p>
         <p th:text="${exception}" ></p>
     </main>
-    <div th:replace="~{/fragments/footer :: footer}"></div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

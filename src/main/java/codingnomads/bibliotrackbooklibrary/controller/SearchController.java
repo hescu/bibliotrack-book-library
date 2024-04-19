@@ -29,6 +29,7 @@ public class SearchController {
     @PostMapping()
     public String performSearch(@ModelAttribute("searchFormData") SearchFormData searchFormData,
                                 Model model) {
+        System.out.println("SEARCH CONTROLLER  =======================================");
         model.addAttribute("searchResults", searchService.performSearch(searchFormData));
         return "search";
     }
