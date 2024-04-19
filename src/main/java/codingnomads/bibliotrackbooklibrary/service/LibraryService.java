@@ -1,7 +1,6 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
-import codingnomads.bibliotrackbooklibrary.exception.LibraryEntityExceptions;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.User;
 import codingnomads.bibliotrackbooklibrary.model.Wishlist;
@@ -12,7 +11,6 @@ import codingnomads.bibliotrackbooklibrary.repository.BookRepo;
 import codingnomads.bibliotrackbooklibrary.repository.UserRepo;
 import codingnomads.bibliotrackbooklibrary.repository.WishlistRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -83,7 +81,10 @@ public class LibraryService {
     public Set<Book> fetchBooksFromWishlist() {
         User currentUser = getCurrentUser();
         if (currentUser != null) {
-            return currentUser.getWishlist().getBooks();
+            Optional<Wishlist> wishlist = wishlistRepo.findById(currentUser.getWishlist().getId());
+            if (wishlist.isPresent()) {
+                return wishlist.get().getBooks();
+            }
         }
         return null;
     }

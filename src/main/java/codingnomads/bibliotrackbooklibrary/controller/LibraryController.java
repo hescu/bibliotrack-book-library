@@ -4,11 +4,10 @@ import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import codingnomads.bibliotrackbooklibrary.model.Wishlist;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/my-library")
@@ -25,14 +24,17 @@ public class LibraryController {
 
     @Loggable
     @PostMapping("/wishlist/add")
-    @ResponseBody
-    public ResponseEntity<String> addBookToWishlist(@RequestParam("isbn") String isbn) {
+    public ModelAndView addBookToWishlist(@RequestParam("isbn") String isbn) {
+        ModelAndView modelAndView = new ModelAndView();
         try {
             libraryService.addBookToWishlist(isbn);
-            return ResponseEntity.ok("Book added to wishlist successfully.");
+            modelAndView.setViewName("redirect:/search");
+            modelAndView.addObject("message", "Book added to wishlist successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add book to wishlist." + e.getMessage());
+            modelAndView.setViewName("redirect:/error");
+            modelAndView.addObject("message", "Failed to add book to wishlist: " + e.getMessage());
         }
+        return modelAndView;
     }
 
     @PostMapping("/wishlist/delete")
