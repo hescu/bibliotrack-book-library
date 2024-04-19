@@ -1,6 +1,6 @@
-CREATE DATABASE IF NOT EXISTS bibliotrack_test;
+CREATE DATABASE IF NOT EXISTS bibliotrack;
 
-USE bibliotrack_test;
+USE bibliotrack;
 
 CREATE TABLE IF NOT EXISTS authority (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
