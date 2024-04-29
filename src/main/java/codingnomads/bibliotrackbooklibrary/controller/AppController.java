@@ -2,6 +2,9 @@ package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import codingnomads.bibliotrackbooklibrary.service.UserPrincipalService;
+import io.lettuce.core.RedisClient;
+import io.lettuce.core.api.StatefulRedisConnection;
+import io.lettuce.core.api.sync.RedisCommands;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
