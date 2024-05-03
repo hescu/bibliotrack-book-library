@@ -57,6 +57,21 @@ CREATE TABLE IF NOT EXISTS userprincipal_authority (
     FOREIGN KEY (authority_id) REFERENCES authority(id)
 );
 
+CREATE TABLE IF NOT EXISTS bookshelf (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) DEFAULT 'Bookshelf',
+    user_id BIGINT NOT NULL,
+    FOREIGN Key (user_id) REFERENCES user(id)
+);
+
+CREATE TABLE IF NOT EXISTS bookshelf_book (
+    bookshelf_id BIGINT NOT NULL,
+    book_id BIGINT NOT NULL,
+    PRIMARY KEY (bookshelf_id, book_id),
+    FOREIGN KEY (bookshelf_id) REFERENCES bookshelf(id),
+    FOREIGN KEY (book_id) REFERENCES book(id)
+);
+
 INSERT INTO authority (authority) VALUES ('ROLE_ADMIN'), ('ROLE_USER');
 
 INSERT INTO wishlist VALUES (DEFAULT);
@@ -79,3 +94,5 @@ SELECT * FROM userprincipal;
 INSERT INTO userprincipal_authority (userprincipal_id, authority_id)
 SELECT @admin_user_id, id FROM authority WHERE authority = 'ROLE_ADMIN';
 
+INSERT INTO bookshelf (user_id)
+VALUES (@user_id);
