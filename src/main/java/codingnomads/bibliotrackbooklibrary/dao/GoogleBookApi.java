@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Google books API.
+ */
 @Component
 @Getter
 public class GoogleBookApi implements IBookApi {
@@ -23,6 +26,7 @@ public class GoogleBookApi implements IBookApi {
     private final String ENDPOINT_BASE_URL = "https://www.googleapis.com";
     private final String ENDPOINT_GOOGLE_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?startIndex=%s&maxResults=%s&langRestrict=%s&q=%s:%s&key=%s";
     private final String LANGUAGE_RESTRICTION = "en";
+
     public static final Map<String, String> searchCriteriaToGoogleQueryCriteria = new HashMap<>();
 
     @Value("${google.books.api.key}")
@@ -56,7 +60,12 @@ public class GoogleBookApi implements IBookApi {
         }
     }
 
-    private static Book getBook(VolumeInfo volumeInfo) {
+    /** Parse VolumeInfo to Book
+     *
+     * @param volumeInfo VolumeInfo from search
+     * @return Book
+     */
+    private static Book parseVolumeInfoToBook(VolumeInfo volumeInfo) {
         String thumbnail = null;
         if (volumeInfo.getImageLinks() != null) {
             thumbnail = volumeInfo.getImageLinks().getThumbnail();
@@ -79,6 +88,14 @@ public class GoogleBookApi implements IBookApi {
         );
     }
 
+    /** Build URL for Google API Request
+     *
+     * @param searchText the search string
+     * @param searchCriteria the search criteria
+     * @param startIndex
+     * @param maxResults
+     * @return the url
+     */
     private String buildGoogleRequestUrl(String searchText, String searchCriteria, int startIndex, int maxResults) {
         searchCriteriaToGoogleQueryCriteria.put("author", "inauthor");
         searchCriteriaToGoogleQueryCriteria.put("title", "intitle");
@@ -87,6 +104,11 @@ public class GoogleBookApi implements IBookApi {
         return String.format(ENDPOINT_GOOGLE_SEARCH, startIndex, maxResults, LANGUAGE_RESTRICTION, searchTerm, searchText, googleBooksApiKey);
     }
 
+    /** Send Request to Google Books API
+     *
+     * @param requestUrl the request url
+     * @return List of found books
+     */
     private List<Book> sendRequest(String requestUrl) {
         System.out.println("GETTING RESULTS FROM GOOGLE  =======================================");
 
@@ -105,7 +127,7 @@ public class GoogleBookApi implements IBookApi {
                 if (volumeInfo == null) {
                     continue;
                 }
-                Book book = getBook(volumeInfo);
+                Book book = parseVolumeInfoToBook(volumeInfo);
                 books.add(book);
             }
             return books;
