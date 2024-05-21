@@ -62,6 +62,14 @@
                                         <input type="hidden" name="isbn" th:value="${item.isbn}" />
                                         <button id="addToWishlistButton" type="submit">Add to wishlist</button>
                                     </form>
+                                    <form id="addToBookshelfForm" th:action="@{/my-library/bookshelf/add}" th:method="post" th:object="${addToBookshelfFormData}">
+                                        <button type="submit">Add to bookshelf</button>
+                                        <select th:field="*{bookshelfId}" aria-label="Select bookshelf..." required>
+                                            <option selected disabled value="">Select bookshelf...</option>
+                                            <option th:each="bookshelf : ${bookshelfList}" th:value="${bookshelf.id}" th:text="${bookshelf.name}"></option>
+                                        </select>
+                                        <input type="hidden" th:field="*{isbn}" th:value="${item.isbn}"/>
+                                    </form>
                                 </div>
                             </div>
                             <div>

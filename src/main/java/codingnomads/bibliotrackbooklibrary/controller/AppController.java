@@ -43,6 +43,13 @@ public class AppController {
         return "register";
     }
 
+    /**
+     * Display admin page string.
+     *
+     * @param model       the model
+     * @param userDetails the user details
+     * @return the string
+     */
     @GetMapping("/admin")
     public String displayAdminPage(Model model,  @AuthenticationPrincipal UserDetails userDetails) {
         model.addAttribute("users", userPrincipalService.findAllUsers());

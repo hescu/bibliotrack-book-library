@@ -10,14 +10,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Arrays;
-
 @Controller
 public class UserController {
 
     @Autowired
     UserPrincipalService customUserDetailsService;
 
+    /**
+     * Register new user string.
+     *
+     * @param username           the username
+     * @param password           the password
+     * @param redirectAttributes the redirect attributes
+     * @return the string
+     * @throws Exception the exception
+     */
     @PostMapping(path = "/register")
     public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) throws Exception {
         try {
@@ -36,6 +43,13 @@ public class UserController {
         }
     }
 
+    /**
+     * Delete user string.
+     *
+     * @param id the id
+     * @return the string
+     * @throws Exception the exception
+     */
     @PostMapping(path = "/admin/delete_user/{id}")
     public String deleteUser(@PathVariable Long id) throws Exception {
         try {

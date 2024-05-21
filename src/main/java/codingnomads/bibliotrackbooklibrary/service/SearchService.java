@@ -14,6 +14,11 @@ public class SearchService {
     @Autowired
     private IBookApi googleBookApi;
 
+    /**
+     * Fetches search results from Google API or the cache.
+     * @param searchFormData The {@link SearchFormData} from the user request.
+     * @return A list of {@link Book}
+     */
     @Cacheable(value = "searchResultsCache")
     public List<Book> performSearch(SearchFormData searchFormData) {
         return googleBookApi.performSearch(searchFormData);

@@ -35,13 +35,6 @@ public class LoggingAspect {
         LOGGER.info(message.toString());
     }
 
-//    @Before("executeLogging()")
-//    public void logBefore(JoinPoint joinPoint) {
-//        final Object[] args = joinPoint.getArgs();
-//        String methodName = joinPoint.getSignature().getName();
-//        LOGGER.debug(">> {}() - {}", methodName, Arrays.toString(args));
-//    }
-
     @AfterReturning(value = "publicMethodsFromServicePackage()", returning = "result")
     public void logAfterServiceMethod(JoinPoint joinPoint, Object result) {
         String methodName = joinPoint.getSignature().getName();
