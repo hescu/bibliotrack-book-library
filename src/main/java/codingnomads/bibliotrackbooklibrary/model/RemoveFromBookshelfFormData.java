@@ -7,9 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddToBookshelfFormData {
-
+public class RemoveFromBookshelfFormData {
     private Long bookshelfId;
-    private String formDataISBN;
-
+    private Long bookId;
 }

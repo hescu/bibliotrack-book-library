@@ -2,6 +2,7 @@ package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import codingnomads.bibliotrackbooklibrary.model.AddToBookshelfFormData;
+import codingnomads.bibliotrackbooklibrary.model.RemoveFromBookshelfFormData;
 import codingnomads.bibliotrackbooklibrary.model.Wishlist;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public class LibraryController {
         System.out.println(" DISPLAYING LIBRARY ");
         model.addAttribute("wishlist", libraryService.fetchBooksFromWishlist());
         model.addAttribute("bookshelfList", libraryService.fetchBookshelves());
+        model.addAttribute("removeBookFromBookshelfFormData", new RemoveFromBookshelfFormData());
         System.out.println("FOUND WISHLISTS AND BOOKSHELVES");
 
         return "my-library";
@@ -71,6 +73,7 @@ public class LibraryController {
             if (wishlist != null) {
                 model.addAttribute("message", "Book removed from wishlist successfully.");
                 model.addAttribute("wishlist", wishlist.getBooks());
+                model.addAttribute("bookshelfList", libraryService.fetchBookshelves());
             } else {
                 model.addAttribute("error", "Failed to remove book from wishlist.");
             }
@@ -90,7 +93,9 @@ public class LibraryController {
     @PostMapping("/bookshelf/add")
     public ModelAndView addBookToBookshelf(@ModelAttribute("addToBookshelfFormData") AddToBookshelfFormData addToBookshelfPostRequest, RedirectAttributes redirectAttributes) {
         try {
-            libraryService.addBookToBookshelf(addToBookshelfPostRequest.getIsbn(), addToBookshelfPostRequest.getBookshelfId());
+            System.out.println("ISBN IN CONTROLLER: " + addToBookshelfPostRequest.getFormDataISBN());
+            System.out.println("BOOKSHELF ID IN CONTROLLER: " + addToBookshelfPostRequest.getBookshelfId());
+            libraryService.addBookToBookshelf(addToBookshelfPostRequest.getFormDataISBN(), addToBookshelfPostRequest.getBookshelfId());
             redirectAttributes.addFlashAttribute("message", "Book added to bookshelf successfully.");
             redirectAttributes.addFlashAttribute("alertClass", "alert-success");
             return new ModelAndView("redirect:/search");
@@ -101,18 +106,19 @@ public class LibraryController {
         }
     }
 
+
     /**
      * Remove book from bookshelf.
      *
-     * @param bookId      the book id
-     * @param bookshelfId the bookshelf id
-     * @param model       the model
+     * @param removeFromBookshelfFormData the remove from bookshelf form data
+     * @param model                       the model
      * @return the string
      */
     @PostMapping("/bookshelf/delete")
-    public String removeBookFromBookshelf(@RequestParam("bookId") Long bookId, @RequestParam("bookshelfId") Long bookshelfId, Model model) {
+    public String removeBookFromBookshelf(@ModelAttribute("removeBookFromBookshelfFormData") RemoveFromBookshelfFormData removeFromBookshelfFormData, Model model) {
         try {
-            libraryService.removeBookFromBookshelf(bookshelfId , bookId);
+            libraryService.removeBookFromBookshelf(removeFromBookshelfFormData.getBookshelfId(), removeFromBookshelfFormData.getBookId());
+            model.addAttribute("removeBookFromBookshelfFormData", new RemoveFromBookshelfFormData());
         } catch (Exception e) {
             model.addAttribute("error", "Failed to remove book from bookshelf: " + e.getMessage());
         }

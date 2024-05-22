@@ -12,7 +12,6 @@ import codingnomads.bibliotrackbooklibrary.repository.BookRepo;
 import codingnomads.bibliotrackbooklibrary.repository.BookshelfRepo;
 import codingnomads.bibliotrackbooklibrary.repository.UserRepo;
 import codingnomads.bibliotrackbooklibrary.repository.WishlistRepo;
-import com.sun.tools.jconsole.JConsoleContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -45,6 +44,12 @@ public class LibraryService {
     @Autowired
     private BookshelfRepo bookshelfRepo;
 
+    /**
+     * Add book to wishlist.
+     *
+     * @param isbn the book isbn
+     * @throws Exception if book can't be added to wishlist
+     */
     @Transactional
     public void addBookToWishlist(String isbn) {
         try {
@@ -64,6 +69,12 @@ public class LibraryService {
         }
     }
 
+    /**
+     * Remove book from wishlist.
+     *
+     * @param bookId the book id
+     * @return the wishlist
+     */
     @Transactional
     public Wishlist removeBookFromWishlist(Long bookId) {
         try {
@@ -91,6 +102,11 @@ public class LibraryService {
         return null;
     }
 
+    /**
+     * Fetch books from wishlist.
+     *
+     * @return the set of books
+     */
     public Set<Book> fetchBooksFromWishlist() {
         System.out.println("FETCHING BOOKS FROM WISHLIST");
         User currentUser = getCurrentUser();
@@ -117,30 +133,55 @@ public class LibraryService {
         return optionalWishlist.orElse(null);
     }
 
+    /**
+     * Fetch bookshelves list.
+     *
+     * @return the list
+     */
     public List<Bookshelf> fetchBookshelves() {
         User currentUser = getCurrentUser();
         if (currentUser != null) {
+            List<Bookshelf> currentUserBookshelves = new ArrayList<>();
             System.out.println("GETTING ALL BOOKSHELVES FOR USER");
-            return libraryMapper.findAllBookshelvesByUserId(currentUser.getId());
+            List<Long> bookshelfIds = libraryMapper.findAllBookshelvesIDsByUserId(currentUser.getId());
+            for (Long id : bookshelfIds) {
+                currentUserBookshelves.add(bookshelfRepo.getReferenceById(id));
+            }
+            return currentUserBookshelves;
         }
         return new ArrayList<>();
     }
 
+    /**
+     * Add book to bookshelf.
+     *
+     * @param isbn        the isbn
+     * @param bookshelfId the bookshelf id
+     */
     public void addBookToBookshelf(String isbn, Long bookshelfId) {
         try {
-//            Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
-//            if (bookFromDb != null) {
-//                libraryMapper.addBookToBookshelf(bookFromDb.getId(), bookshelfId);
-//            } else {
+            Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
+            if (bookFromDb == null) {
                 Book book = googleBookApi.searchBookByIsbn(isbn);
+                System.out.println("BOOK FROM DB IS NULL. GOOGLE SEARCH BOOK ISBN: " + book.getIsbn());
                 libraryMapper.addBookToDB(book);
-                libraryMapper.addBookToBookshelf(book.getId(), bookshelfId);
-//            }
+                Book newlyAddedBook = libraryMapper.findBookByIsbn(isbn);
+                libraryMapper.addBookToBookshelf(newlyAddedBook.getId(), bookshelfId);
+            } else {
+                System.out.println("BOOK FROM DB - ISBN: " + bookFromDb.getIsbn());
+                libraryMapper.addBookToBookshelf(bookFromDb.getId(), bookshelfId);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
+    /**
+     * Remove book from bookshelf.
+     *
+     * @param bookshelfId the bookshelf id
+     * @param bookId      the book id
+     */
     public void removeBookFromBookshelf(Long bookshelfId, Long bookId) {
         try {
             libraryMapper.removeBookFromBookshelf(bookshelfId, bookId);

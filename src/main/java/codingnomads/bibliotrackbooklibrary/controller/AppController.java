@@ -29,6 +29,10 @@ public class AppController {
     @GetMapping("/login")
     public String displayLoginPage() { return "login"; }
 
+    /** Logout user
+     *
+     * @return index template
+     */
     @PostMapping("/logout")
     public String logout() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -48,7 +52,7 @@ public class AppController {
      *
      * @param model       the model
      * @param userDetails the user details
-     * @return the string
+     * @return admin template
      */
     @GetMapping("/admin")
     public String displayAdminPage(Model model,  @AuthenticationPrincipal UserDetails userDetails) {

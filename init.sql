@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS book (
     thumbnail VARCHAR(255),
     publisher VARCHAR(255),
     published_date VARCHAR(255),
-    description TEXT COLLATE utf8mb4_unicode_ci,
     page_count INT,
     UNIQUE (isbn)
 );

@@ -18,17 +18,22 @@ public interface LibraryMapper {
             "WHERE isbn = #{isbn};")
     Book findBookByIsbn(String isbn);
 
-    @Select("SELECT * FROM bookshelf " +
+    @Select("SELECT id FROM bookshelf " +
             "WHERE user_id = #{userId};")
-    List<Bookshelf> findAllBookshelvesByUserId(Long userId);
+    List<Long> findAllBookshelvesIDsByUserId(Long userId);
 
     @Delete("DELETE FROM bookshelf_book " +
             "WHERE bookshelf_id = #{bookshelfId} " +
             "AND book_id = #{bookId};")
     void removeBookFromBookshelf(Long bookshelfId, Long bookId);
 
-    @Insert("INSERT INTO book (isbn, title, thumbnail, publisher, published_date, description, page_count)\n" +
-            "VALUES (#{book.isbn}, #{book.title}, #{book.thumbnail}, #{book.publisher}, #{book.publishedDate}, #{book.description}, #{book.pageCount})")
+    /**
+     * Add book to db.
+     *
+     * @param book the book
+     */
+    @Insert("INSERT INTO book (isbn, title, thumbnail, publisher, published_date, page_count) " +
+            "VALUES (#{book.isbn}, #{book.title}, #{book.thumbnail}, #{book.publisher}, #{book.publishedDate}, #{book.pageCount})")
     void addBookToDB(@Param("book") Book book);
 
     @Insert("INSERT INTO bookshelf_book (bookshelf_id, book_id)" +

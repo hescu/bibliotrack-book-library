@@ -39,6 +39,12 @@ public class UserPrincipalService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Username or email not found : " + username));
     }
 
+    /**
+     * Create new user principal.
+     *
+     * @param userPrincipal the user principal
+     * @return the user principal
+     */
     public UserPrincipal createNewUser(UserPrincipal userPrincipal) {
         if (!checkIfUsernameAlreadyExists(userPrincipal.getUsername())) {
             throw new UserExceptions.UsernameAlreadyExistsException(userPrincipal.getUsername());
@@ -66,6 +72,27 @@ public class UserPrincipalService implements UserDetailsService {
         }
     }
 
+    /**
+     * Find all users list.
+     *
+     * @return the list
+     */
+    public List<UserPrincipal> findAllUsers() {
+        return userPrincipalRepo.findAll();
+    }
+
+    /**
+     * Delete user by id.
+     *
+     * @param id the id
+     */
+    @Transactional
+    public void deleteUserById(Long id) {
+        int rowsDeleted = userPrincipalMapper.deleteFromUserAuthorityJoinTableById(id);
+        int rowsDeleted2 = userPrincipalMapper.deleteUserPrincipalById(id);
+        System.out.println(rowsDeleted + rowsDeleted2);
+    }
+
     private void checkPassword(String password) {
         if(password == null) {
             throw new UserExceptions.InvalidPasswordException("You must set a password");
@@ -77,16 +104,5 @@ public class UserPrincipalService implements UserDetailsService {
 
     private boolean checkIfUsernameAlreadyExists(String username) {
         return userPrincipalMapper.countUsernames(username) == 0;
-    }
-
-    public List<UserPrincipal> findAllUsers() {
-        return userPrincipalRepo.findAll();
-    }
-
-    @Transactional
-    public void deleteUserById(Long id) {
-        int rowsDeleted = userPrincipalMapper.deleteFromUserAuthorityJoinTableById(id);
-        int rowsDeleted2 = userPrincipalMapper.deleteUserPrincipalById(id);
-        System.out.println(rowsDeleted + rowsDeleted2);
     }
 }

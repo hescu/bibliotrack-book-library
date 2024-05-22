@@ -56,21 +56,21 @@
                             </tr>
                         </thead>
                         <tbody>
-<!--                        <tr th:each="book : ${bookshelf}">-->
-<!--                            <td th:text="${book.isbn}"></td>-->
-<!--                            <td th:text="${book.title}"></td>-->
-<!--                            <td th:each="author : ${book.authors}">-->
-<!--                                <div th:text="${author}"></div>-->
-<!--                            </td>-->
-<!--                            <td th:text="${book.publisher != null} ? ${book.publisher} : 'unknown'"></td>-->
-<!--                            <td>-->
-<!--                                <form id="deleteFromBookshelfForm" th:action="@{/my-library/bookshelf/delete}" th:method="post">-->
-<!--                                    <input type="hidden" name="bookId" th:value="${book.id}" />-->
-<!--                                    <input type="hidden" name="bookshelfId" th:value="${bookshelf.id}" />-->
-<!--                                    <button type="submit" id="deleteFromBookshelfButton">Remove from Bookshelf</button>-->
-<!--                                </form>-->
-<!--                            </td>-->
-<!--                        </tr>-->
+                            <tr th:each="book : ${bookshelf.getBooks()}">
+                                <td th:text="${book.isbn}"></td>
+                                <td th:text="${book.title}"></td>
+                                <td th:each="author : ${book.authors}">
+                                    <div th:text="${author}"></div>
+                                </td>
+                                <td th:text="${book.publisher != null} ? ${book.publisher} : 'unknown'"></td>
+                                <td>
+                                    <form id="deleteFromBookshelfForm" th:action="@{/my-library/bookshelf/delete}" th:method="post" th:object="${removeBookFromBookshelfFormData}">
+                                        <input type="hidden" name="bookId" th:value="${book.id}" />
+                                        <input type="hidden" name="bookshelfId" th:value="${bookshelf.id}" />
+                                        <button type="submit" id="deleteFromBookshelfButton">Remove from Bookshelf</button>
+                                    </form>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

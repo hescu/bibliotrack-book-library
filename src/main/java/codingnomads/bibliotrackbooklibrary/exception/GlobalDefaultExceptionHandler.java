@@ -11,6 +11,14 @@ import org.springframework.web.servlet.ModelAndView;
 public class GlobalDefaultExceptionHandler {
     public static final String DEFAULT_ERROR_VIEW = "errors/error";
 
+    /**
+     * Default error handler model and view.
+     *
+     * @param req the req
+     * @param e   the e
+     * @return the model and view
+     * @throws Exception the exception
+     */
     @ExceptionHandler(value = Exception.class)
     public ModelAndView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
         if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null) {

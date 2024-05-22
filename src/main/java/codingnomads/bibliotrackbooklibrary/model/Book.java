@@ -31,8 +31,7 @@ public class Book implements Serializable {
     private String publisher;
     private String publishedDate;
 
-    @Lob
-    @Column(length = 256)
+    @Transient
     private String description;
     private int pageCount;
 
