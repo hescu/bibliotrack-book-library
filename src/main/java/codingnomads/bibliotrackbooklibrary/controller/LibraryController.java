@@ -2,6 +2,7 @@ package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.logging.Loggable;
 import codingnomads.bibliotrackbooklibrary.model.AddToBookshelfFormData;
+import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
 import codingnomads.bibliotrackbooklibrary.model.RemoveFromBookshelfFormData;
 import codingnomads.bibliotrackbooklibrary.model.Wishlist;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
@@ -117,8 +118,13 @@ public class LibraryController {
     @PostMapping("/bookshelf/delete")
     public String removeBookFromBookshelf(@ModelAttribute("removeBookFromBookshelfFormData") RemoveFromBookshelfFormData removeFromBookshelfFormData, Model model) {
         try {
-            libraryService.removeBookFromBookshelf(removeFromBookshelfFormData.getBookshelfId(), removeFromBookshelfFormData.getBookId());
+            Bookshelf bookshelf = libraryService.removeBookFromBookshelf(
+                    removeFromBookshelfFormData.getBookshelfId(),
+                    removeFromBookshelfFormData.getBookId()
+            );
             model.addAttribute("removeBookFromBookshelfFormData", new RemoveFromBookshelfFormData());
+            model.addAttribute("wishlist", libraryService.fetchBooksFromWishlist());
+            model.addAttribute("bookshelfList", libraryService.fetchBookshelves());
         } catch (Exception e) {
             model.addAttribute("error", "Failed to remove book from bookshelf: " + e.getMessage());
         }

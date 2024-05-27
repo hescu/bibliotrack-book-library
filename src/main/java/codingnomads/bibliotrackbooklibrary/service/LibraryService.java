@@ -182,9 +182,11 @@ public class LibraryService {
      * @param bookshelfId the bookshelf id
      * @param bookId      the book id
      */
-    public void removeBookFromBookshelf(Long bookshelfId, Long bookId) {
+    public Bookshelf removeBookFromBookshelf(Long bookshelfId, Long bookId) {
         try {
             libraryMapper.removeBookFromBookshelf(bookshelfId, bookId);
+            Optional<Bookshelf> optionalBookshelf = bookshelfRepo.findById(bookshelfId);
+            return optionalBookshelf.orElseThrow();
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove book from bookshelf: " + e.getMessage());
         }

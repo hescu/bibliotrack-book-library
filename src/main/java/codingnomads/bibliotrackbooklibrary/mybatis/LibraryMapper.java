@@ -32,8 +32,8 @@ public interface LibraryMapper {
      *
      * @param book the book
      */
-    @Insert("INSERT INTO book (isbn, title, thumbnail, publisher, published_date, page_count) " +
-            "VALUES (#{book.isbn}, #{book.title}, #{book.thumbnail}, #{book.publisher}, #{book.publishedDate}, #{book.pageCount})")
+    @Insert("INSERT INTO book (isbn, title, thumbnail, publisher, published_date, description, page_count) " +
+            "VALUES (#{book.isbn}, #{book.title}, #{book.thumbnail}, #{book.publisher}, #{book.publishedDate}, #{book.description}, #{book.pageCount})")
     void addBookToDB(@Param("book") Book book);
 
     @Insert("INSERT INTO bookshelf_book (bookshelf_id, book_id)" +
