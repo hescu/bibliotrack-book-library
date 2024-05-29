@@ -38,7 +38,7 @@ public interface LibraryMapper {
     void addBookToDB(@Param("book") Book book);
 
     @Insert("INSERT INTO author (name) " +
-            "VALUES (#author.name);")
+            "VALUES (#{author.name});")
     @Options(useGeneratedKeys = true, keyProperty = "author.id")
     void addAuthorToDB(@Param("author") Author author);
 
