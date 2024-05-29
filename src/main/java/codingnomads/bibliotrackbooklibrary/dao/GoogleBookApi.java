@@ -3,6 +3,7 @@ package codingnomads.bibliotrackbooklibrary.dao;
 import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
 import codingnomads.bibliotrackbooklibrary.entity.response.Item;
 import codingnomads.bibliotrackbooklibrary.entity.response.VolumeInfo;
+import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
 import lombok.Getter;
@@ -76,10 +77,15 @@ public class GoogleBookApi implements IBookApi {
             isbn = volumeInfo.getIndustryIdentifiers().getFirst().getIdentifier();
         }
 
+        List<Author> authorList = new ArrayList<>();
+        for (String authorName : volumeInfo.getAuthors()) {
+            authorList.add(new Author(authorName));
+        }
+
         return new Book(
                 isbn,
                 volumeInfo.getTitle(),
-                volumeInfo.getAuthors(),
+                authorList,
                 thumbnail,
                 volumeInfo.getPublisher(),
                 volumeInfo.getPublishedDate(),

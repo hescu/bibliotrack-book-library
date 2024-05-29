@@ -1,7 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.mybatis;
 
+import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
-import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public interface LibraryMapper {
     @Delete("DELETE FROM bookshelf_book " +
             "WHERE bookshelf_id = #{bookshelfId} " +
             "AND book_id = #{bookId};")
-    void removeBookFromBookshelf(Long bookshelfId, Long bookId);
+    void removeBookBookshelfRelation(Long bookshelfId, Long bookId);
 
     /**
      * Add book to db.
@@ -34,9 +34,18 @@ public interface LibraryMapper {
      */
     @Insert("INSERT INTO book (isbn, title, thumbnail, publisher, published_date, description, page_count) " +
             "VALUES (#{book.isbn}, #{book.title}, #{book.thumbnail}, #{book.publisher}, #{book.publishedDate}, #{book.description}, #{book.pageCount})")
+    @Options(useGeneratedKeys = true, keyProperty = "book.id")
     void addBookToDB(@Param("book") Book book);
+
+    @Insert("INSERT INTO author (name) " +
+            "VALUES (#author.name);")
+    @Options(useGeneratedKeys = true, keyProperty = "author.id")
+    void addAuthorToDB(@Param("author") Author author);
+
+    @Insert("INSERT INTO author_book (author_id, book_id) VALUES (#{authorId}, #{bookId})")
+    void addAuthorBookRelation(@Param("authorId") Long authorId, @Param("bookId") Long bookId);
 
     @Insert("INSERT INTO bookshelf_book (bookshelf_id, book_id)" +
             "VALUES (#{bookshelfId}, #{id})")
-    void addBookToBookshelf(@Param("id") Long id, @Param("bookshelfId") Long bookshelfId);
+    void addBookBookshelfRelation(@Param("id") Long id, @Param("bookshelfId") Long bookshelfId);
 }

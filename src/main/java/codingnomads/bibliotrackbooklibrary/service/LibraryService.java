@@ -1,10 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
-import codingnomads.bibliotrackbooklibrary.model.Book;
-import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
-import codingnomads.bibliotrackbooklibrary.model.User;
-import codingnomads.bibliotrackbooklibrary.model.Wishlist;
+import codingnomads.bibliotrackbooklibrary.model.*;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.mybatis.LibraryMapper;
 import codingnomads.bibliotrackbooklibrary.mybatis.UserMapper;
@@ -164,12 +161,12 @@ public class LibraryService {
             if (bookFromDb == null) {
                 Book book = googleBookApi.searchBookByIsbn(isbn);
                 System.out.println("BOOK FROM DB IS NULL. GOOGLE SEARCH BOOK ISBN: " + book.getIsbn());
-                libraryMapper.addBookToDB(book);
+                addBookToDB(book);
                 Book newlyAddedBook = libraryMapper.findBookByIsbn(isbn);
-                libraryMapper.addBookToBookshelf(newlyAddedBook.getId(), bookshelfId);
+                libraryMapper.addBookBookshelfRelation(newlyAddedBook.getId(), bookshelfId);
             } else {
                 System.out.println("BOOK FROM DB - ISBN: " + bookFromDb.getIsbn());
-                libraryMapper.addBookToBookshelf(bookFromDb.getId(), bookshelfId);
+                libraryMapper.addBookBookshelfRelation(bookFromDb.getId(), bookshelfId);
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -184,11 +181,19 @@ public class LibraryService {
      */
     public Bookshelf removeBookFromBookshelf(Long bookshelfId, Long bookId) {
         try {
-            libraryMapper.removeBookFromBookshelf(bookshelfId, bookId);
+            libraryMapper.removeBookBookshelfRelation(bookshelfId, bookId);
             Optional<Bookshelf> optionalBookshelf = bookshelfRepo.findById(bookshelfId);
             return optionalBookshelf.orElseThrow();
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove book from bookshelf: " + e.getMessage());
+        }
+    }
+
+    private void addBookToDB(Book book) {
+        libraryMapper.addBookToDB(book);
+        for (Author author : book.getAuthors()) {
+            libraryMapper.addAuthorToDB(author);
+            libraryMapper.addAuthorBookRelation(author.getId(), book.getId());
         }
     }
 }

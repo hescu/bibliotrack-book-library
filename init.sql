@@ -11,6 +11,11 @@ CREATE TABLE IF NOT EXISTS wishlist (
     id BIGINT AUTO_INCREMENT PRIMARY KEY
 );
 
+CREATE TABLE IF NOT EXISTS author (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+)
+
 CREATE TABLE IF NOT EXISTS book (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     isbn VARCHAR(255) NOT NULL,
@@ -48,6 +53,14 @@ CREATE TABLE IF NOT EXISTS wishlist_book (
     FOREIGN KEY (wishlist_id) REFERENCES wishlist(id),
     FOREIGN KEY (book_id) REFERENCES book(id)
 );
+
+CREATE TABLE IF NOT EXISTS author_book (
+    author_id BIGINT NOT NULL,
+    book_id BIGINT NOT NULL,
+    PRIMARY Key (author_id, book_id),
+    FOREIGN Key (author_id) REFERENCES author(id),
+    FOREIGN Key (book_id) REFERENCES book(id),
+)
 
 CREATE TABLE IF NOT EXISTS userprincipal_authority (
     userprincipal_id BIGINT NOT NULL,
