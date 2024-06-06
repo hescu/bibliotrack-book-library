@@ -1,6 +1,7 @@
 package codingnomads.bibliotrackbooklibrary;
 
 import codingnomads.bibliotrackbooklibrary.controller.SearchController;
+import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
@@ -48,9 +49,13 @@ public class ControllerTests {
                 .searchCriteria(searchCriteria)
                 .build();
 
+        Author author = Author.builder().build();
+        List<Author> authorList = new ArrayList<>();
+        authorList.add(author);
+
         Book book = Book.builder()
                         .isbn("")
-                        .authors(List.of(""))
+                        .authors(authorList)
                         .description("")
                         .title("")
                         .thumbnail("")
