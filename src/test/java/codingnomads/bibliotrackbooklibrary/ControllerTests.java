@@ -2,7 +2,7 @@ package codingnomads.bibliotrackbooklibrary;
 
 import codingnomads.bibliotrackbooklibrary.controller.SearchController;
 import codingnomads.bibliotrackbooklibrary.model.Book;
-import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
+import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

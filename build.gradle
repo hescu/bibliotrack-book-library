@@ -37,6 +37,8 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:3.0.3'
 	implementation 'io.lettuce:lettuce-core:6.3.2.RELEASE'
 
+	implementation 'com.google.code.gson:gson:2.11.0'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 

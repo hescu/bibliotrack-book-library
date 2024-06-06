@@ -1,7 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
-import codingnomads.bibliotrackbooklibrary.model.AddToBookshelfFormData;
-import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
+import codingnomads.bibliotrackbooklibrary.model.forms.AddToBookshelfFormData;
+import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;

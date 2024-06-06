@@ -1,10 +1,11 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.logging.Loggable;
-import codingnomads.bibliotrackbooklibrary.model.AddToBookshelfFormData;
+import codingnomads.bibliotrackbooklibrary.model.forms.AddToBookshelfFormData;
 import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
-import codingnomads.bibliotrackbooklibrary.model.RemoveFromBookshelfFormData;
+import codingnomads.bibliotrackbooklibrary.model.forms.RemoveFromBookshelfFormData;
 import codingnomads.bibliotrackbooklibrary.model.Wishlist;
+import codingnomads.bibliotrackbooklibrary.model.forms.ReviewForm;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -129,5 +130,24 @@ public class LibraryController {
             model.addAttribute("error", "Failed to remove book from bookshelf: " + e.getMessage());
         }
         return "my-library";
+    }
+
+    @GetMapping("/review-form")
+    public ModelAndView reviewForm() {
+        return new ModelAndView("review-form", "reviewForm", new ReviewForm());
+    }
+
+    @PostMapping("/my-library/review/{isbn}")
+    public String getReviewForm(@PathVariable("isbn") String isbn, Model model) {
+        ReviewForm reviewForm = new ReviewForm();
+        reviewForm.setIsbn(isbn);
+        model.addAttribute("reviewForm", reviewForm);
+        return "review-form";
+    }
+
+    @PostMapping("/my-library/review/submit-review")
+    public String submitReview(@ModelAttribute("reviewForm") ReviewForm reviewForm, Model model) {
+        libraryService.postReview(reviewForm);
+        return displayMyLibrary(model);
     }
 }

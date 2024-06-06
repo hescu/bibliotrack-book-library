@@ -1,7 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.dao;
 
 import codingnomads.bibliotrackbooklibrary.model.Book;
-import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
+import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
 
 import java.util.List;
 

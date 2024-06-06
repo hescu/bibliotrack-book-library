@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <div class="bookshelf-container">
+        <div class="container">
             <div th:unless="${bookshelfList.isEmpty()}">
                 <div th:each="bookshelf : ${bookshelfList}">
                     <h3 th:text="${bookshelf.name}"></h3>
@@ -53,6 +53,7 @@
                                 <th scope="col">Title</th>
                                 <th scope="col">Author(s)</th>
                                 <th scope="col">Publisher</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,7 +61,7 @@
                                 <td th:text="${book.isbn}"></td>
                                 <td th:text="${book.title}"></td>
                                 <td th:each="author : ${book.authors}">
-                                    <div th:text="${author.name}"></div>
+                                    <ul th:text="${author.name}"></ul>
                                 </td>
                                 <td th:text="${book.publisher != null} ? ${book.publisher} : 'unknown'"></td>
                                 <td>
@@ -68,6 +69,9 @@
                                         <input type="hidden" name="bookId" th:value="${book.id}" />
                                         <input type="hidden" name="bookshelfId" th:value="${bookshelf.id}" />
                                         <button type="submit" id="deleteFromBookshelfButton">Remove from Bookshelf</button>
+                                    </form>
+                                    <form th:action="@{/my-library/reviews/{isbn}(isbn = {$book.isbn})}" th:method="post">
+                                        <button type="submit">Write review</button>
                                     </form>
                                 </td>
                             </tr>

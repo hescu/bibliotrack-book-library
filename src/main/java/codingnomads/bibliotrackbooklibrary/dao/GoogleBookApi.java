@@ -5,7 +5,7 @@ import codingnomads.bibliotrackbooklibrary.entity.response.Item;
 import codingnomads.bibliotrackbooklibrary.entity.response.VolumeInfo;
 import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
-import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
+import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

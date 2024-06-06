@@ -2,7 +2,7 @@ package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.dao.IBookApi;
 import codingnomads.bibliotrackbooklibrary.model.Book;
-import codingnomads.bibliotrackbooklibrary.model.SearchFormData;
+import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package codingnomads.bibliotrackbooklibrary.model;
+package codingnomads.bibliotrackbooklibrary.model.forms;
 
 import lombok.*;
 

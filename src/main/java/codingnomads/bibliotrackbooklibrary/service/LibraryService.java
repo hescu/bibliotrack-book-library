@@ -1,7 +1,9 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
+import codingnomads.bibliotrackbooklibrary.dao.PostReviewApi;
 import codingnomads.bibliotrackbooklibrary.model.*;
+import codingnomads.bibliotrackbooklibrary.model.forms.ReviewForm;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.mybatis.LibraryMapper;
 import codingnomads.bibliotrackbooklibrary.mybatis.UserMapper;
@@ -40,6 +42,9 @@ public class LibraryService {
 
     @Autowired
     private BookshelfRepo bookshelfRepo;
+
+    @Autowired
+    private PostReviewApi postReviewApi;
 
     /**
      * Add book to wishlist.
@@ -186,6 +191,14 @@ public class LibraryService {
             return optionalBookshelf.orElseThrow();
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove book from bookshelf: " + e.getMessage());
+        }
+    }
+
+    public void postReview(ReviewForm reviewForm) {
+        try {
+            postReviewApi.postReview(reviewForm);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
