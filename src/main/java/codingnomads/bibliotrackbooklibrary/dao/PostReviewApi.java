@@ -4,9 +4,11 @@ import codingnomads.bibliotrackbooklibrary.model.forms.ReviewForm;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+@Component
 public class PostReviewApi implements IPostReviewApi{
 
     @Autowired
