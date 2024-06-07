@@ -1,39 +1,8 @@
-version: '3.8'
 services:
   app:
     build: .
     ports:
       - "8080:8080"
-    depends_on:
-      - db
-      - redis
     environment:
       - DB_ROOT_PW=${DB_ROOT_PW}
       - GOOGLE_BOOKS_API_KEY=${GOOGLE_BOOKS_API_KEY}
-
-  db:
-    image: mysql:5.7
-    hostname: db
-    environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PW}"
-      MYSQL_DATABASE: bibliotrack
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "3306:3306"
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-
-  redis:
-    image: redis
-    hostname: redis
-    restart: always
-    volumes:
-      - redis:/data
-    ports:
-      - "6379:6379"
-
-volumes:
-  mysql-data:
-  redis:
-    driver: local
