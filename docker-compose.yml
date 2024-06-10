@@ -1,8 +1,0 @@
-services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      - DB_ROOT_PW=${DB_ROOT_PW}
-      - GOOGLE_BOOKS_API_KEY=${GOOGLE_BOOKS_API_KEY}
