@@ -24,6 +24,7 @@ public class SearchService {
         return googleBookApi.performSearch(searchFormData);
     }
 
+    // For future use: pagination
     public int calculateTotalPages(int totalItems, int itemsPerPage) {
         return (int) Math.ceil((double) totalItems / itemsPerPage);
     }

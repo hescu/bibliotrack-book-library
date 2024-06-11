@@ -3,6 +3,7 @@ package codingnomads.bibliotrackbooklibrary.model.forms;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
@@ -10,7 +11,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SearchFormData {
+public class SearchFormData implements Serializable {
 
     private String searchString;
     private String searchCriteria;
