@@ -60,17 +60,19 @@
                             <tr th:each="book : ${bookshelf.getBooks()}">
                                 <td th:text="${book.isbn}"></td>
                                 <td th:text="${book.title}"></td>
-                                <td th:each="author : ${book.authors}">
-                                    <ul th:text="${author.name}"></ul>
+                                <td>
+                                    <ul>
+                                        <li th:each="author : ${book.authors}" th:text="${author.name}"></li>
+                                    </ul>
                                 </td>
-                                <td th:text="${book.publisher != null} ? ${book.publisher} : 'unknown'"></td>
+                                <td th:text="${book.publisher != null} ? book.publisher : 'unknown'"></td>
                                 <td>
                                     <form id="deleteFromBookshelfForm" th:action="@{/my-library/bookshelf/delete}" th:method="post" th:object="${removeBookFromBookshelfFormData}">
                                         <input type="hidden" name="bookId" th:value="${book.id}" />
                                         <input type="hidden" name="bookshelfId" th:value="${bookshelf.id}" />
                                         <button type="submit" id="deleteFromBookshelfButton">Remove from Bookshelf</button>
                                     </form>
-                                    <form th:action="@{/my-library/reviews/{isbn}(isbn = {$book.isbn})}" th:method="post">
+                                    <form th:action="@{/my-library/reviews/{isbn}(isbn=${book.isbn})}" th:method="post">
                                         <button type="submit">Write review</button>
                                     </form>
                                 </td>
