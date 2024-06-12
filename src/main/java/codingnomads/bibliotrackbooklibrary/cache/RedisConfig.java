@@ -29,6 +29,10 @@ public class RedisConfig {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
         template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setKeySerializer(new GenericJackson2JsonRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashKeySerializer(new GenericJackson2JsonRedisSerializer());
+        template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }
 }

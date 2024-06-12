@@ -3,6 +3,7 @@ package codingnomads.bibliotrackbooklibrary.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -16,6 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class Book implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
