@@ -19,7 +19,7 @@ public class PostReviewApi implements IPostReviewApi{
         String reviewFormAsJson = jsonifyForm(reviewForm);
         try {
             HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
+            headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> entity = new HttpEntity<>(reviewFormAsJson, headers);
 
             String postReviewEndpoint = "https://m09d3.wiremockapi.cloud/reviews";
