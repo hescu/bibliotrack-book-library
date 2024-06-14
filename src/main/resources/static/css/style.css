@@ -13,3 +13,7 @@
     background-color: lightcoral;
     color: darkred;
 }
+
+ul {
+    list-style-type: none;
+}

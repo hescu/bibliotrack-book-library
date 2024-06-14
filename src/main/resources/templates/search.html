@@ -49,7 +49,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title" th:text="${item.title}"></h5>
                                     <div th:each="author : ${item.authors}">
-                                        <p class="card-text" th:text="${author}"></p>
+                                        <p class="card-text" th:text="${author.name}"></p>
                                     </div>
                                     <small th:text="${item.publisher != null} ? ${item.publisher} : 'unknown' + ' (' + ${item.publishedDate} + ')'"></small>
                                 </div>

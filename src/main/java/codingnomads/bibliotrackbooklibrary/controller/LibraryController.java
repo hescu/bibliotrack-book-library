@@ -137,7 +137,7 @@ public class LibraryController {
         return new ModelAndView("review-form", "reviewForm", new ReviewForm());
     }
 
-    @PostMapping("/my-library/review/{isbn}")
+    @GetMapping("/review-form/{isbn}")
     public String getReviewForm(@PathVariable("isbn") String isbn, Model model) {
         ReviewForm reviewForm = new ReviewForm();
         reviewForm.setIsbn(isbn);

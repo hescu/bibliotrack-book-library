@@ -61,8 +61,11 @@ public class Book implements Serializable {
     }
 
     private String sanitizeString(String str) {
-        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
-        return new String(bytes, StandardCharsets.UTF_8);
+        if (str != null) {
+            byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+            return new String(bytes, StandardCharsets.UTF_8);
+        }
+        return "";
     }
 
     public void setDescription(String description) {

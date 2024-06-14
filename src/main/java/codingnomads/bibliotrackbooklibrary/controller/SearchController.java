@@ -1,5 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
+import codingnomads.bibliotrackbooklibrary.model.Book;
+import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
 import codingnomads.bibliotrackbooklibrary.model.forms.AddToBookshelfFormData;
 import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
@@ -10,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/search")
@@ -46,15 +50,30 @@ public class SearchController {
     @PostMapping()
     public String performSearch(@ModelAttribute("searchFormData") SearchFormData searchFormData,
                                 Model model) {
-        System.out.println("SEARCH CONTROLLER  =======================================");
-        long start = System.nanoTime();
-        model.addAttribute("searchResults", searchService.performSearch(searchFormData));
-        model.addAttribute("addToBookshelfFormData", new AddToBookshelfFormData());
-        model.addAttribute("searchFormData", new SearchFormData());
-        model.addAttribute("bookshelfList", libraryService.fetchBookshelves());
-        long end = System.nanoTime();
-        long timeElapsed = end - start;
-        System.out.println("SearchTime: " + timeElapsed);
+        if (searchFormData == null) {
+            searchFormData = new SearchFormData();
+        }
+
+        // Perform search and handle possible null return
+        List<Book> searchResults = searchService.performSearch(searchFormData);
+        if (searchResults == null) {
+            searchResults = Collections.emptyList();
+        }
+        model.addAttribute("searchResults", searchResults);
+
+        // Check if addToBookshelfFormData and searchFormData need to be added to the model
+        AddToBookshelfFormData addToBookshelfFormData = new AddToBookshelfFormData();
+        model.addAttribute("addToBookshelfFormData", addToBookshelfFormData);
+
+        model.addAttribute("searchFormData", searchFormData);
+
+        // Fetch bookshelves and handle possible null return
+        List<Bookshelf> bookshelfList = libraryService.fetchBookshelves();
+        if (bookshelfList == null) {
+            bookshelfList = Collections.emptyList();
+        }
+        model.addAttribute("bookshelfList", bookshelfList);
+
         return "search";
     }
 }
