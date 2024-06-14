@@ -18,10 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserPrincipalService implements UserDetailsService {
@@ -55,6 +52,7 @@ public class UserPrincipalService implements UserDetailsService {
      *
      * @param userPrincipal the user principal
      */
+    @Transactional
     public void createNewUserPrincipal(UserPrincipal userPrincipal) {
         if (!checkIfUsernameAlreadyExists(userPrincipal.getUsername())) {
             throw new UserExceptions.UsernameAlreadyExistsException(userPrincipal.getUsername());
@@ -75,7 +73,6 @@ public class UserPrincipalService implements UserDetailsService {
         userPrincipal.setPassword(passwordEncoder.encode(userPrincipal.getPassword()));
 
         try {
-            System.out.println("TRYING TO CREATE USERPRINCIPAL");
             User newUser = new User();
             newUser.setWishlist(new Wishlist());
 
@@ -85,12 +82,14 @@ public class UserPrincipalService implements UserDetailsService {
             Bookshelf newBookshelf = new Bookshelf();
             newBookshelf.setUser(newUser);
             newBookshelf.setBooks(new HashSet<>());
-            bookshelfRepo.save(newBookshelf);
+            Bookshelf savedBookshelf = bookshelfRepo.save(newBookshelf);
 
-            newUser.setBookshelves(Collections.singletonList(newBookshelf));
+            List<Bookshelf> bookshelves = new ArrayList<>();
+            bookshelves.add(savedBookshelf);
+            newUser.setBookshelves(bookshelves);
+
             userRepo.save(newUser);
         } catch (Exception e) {
-            System.out.println("EXCEPTION: " + e.getMessage());
             throw new IllegalStateException(e.getMessage(), e.getCause());
         }
     }
