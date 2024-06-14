@@ -3,6 +3,7 @@ package codingnomads.bibliotrackbooklibrary.service;
 import codingnomads.bibliotrackbooklibrary.exception.UserExceptions;
 import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
 import codingnomads.bibliotrackbooklibrary.model.User;
+import codingnomads.bibliotrackbooklibrary.model.Wishlist;
 import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.mybatis.UserPrincipalMapper;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,9 +66,6 @@ public class UserPrincipalService implements UserDetailsService {
         userPrincipal.setCredentialsNonExpired(true);
         userPrincipal.setEnabled(true);
 
-        User newUser = createNewUser();
-        userPrincipal.setUser(newUser);
-
         Optional<Authority> auth = authorityRepo.findById(2L);
         auth.ifPresent(authority -> userPrincipal
                 .setAuthorities(Collections
@@ -76,7 +75,19 @@ public class UserPrincipalService implements UserDetailsService {
         userPrincipal.setPassword(passwordEncoder.encode(userPrincipal.getPassword()));
 
         try {
+            User newUser = new User();
+            newUser.setWishlist(new Wishlist());
+
+            userPrincipal.setUser(newUser);
             userPrincipalRepo.save(userPrincipal);
+
+            Bookshelf newBookshelf = new Bookshelf();
+            newBookshelf.setUser(newUser);
+            newBookshelf.setBooks(new HashSet<>());
+            bookshelfRepo.save(newBookshelf);
+
+            newUser.setBookshelves(Collections.singletonList(newBookshelf));
+            userRepo.save(newUser);
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e.getCause());
         }

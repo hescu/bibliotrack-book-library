@@ -83,7 +83,7 @@ public class LibraryController {
         } catch (Exception e) {
             model.addAttribute("error", "Failed to remove book from wishlist: " + e.getMessage());
         }
-        return "my-library";
+        return "redirect:/my-library";
     }
 
     /**
