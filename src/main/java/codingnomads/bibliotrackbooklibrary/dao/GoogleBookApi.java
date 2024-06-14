@@ -77,10 +77,7 @@ public class GoogleBookApi implements IBookApi {
             isbn = volumeInfo.getIndustryIdentifiers().getFirst().getIdentifier();
         }
 
-        List<Author> authorList = new ArrayList<>();
-        for (String authorName : volumeInfo.getAuthors()) {
-            authorList.add(new Author(authorName));
-        }
+        List<Author> authorList = getAuthorList(volumeInfo);
 
         return new Book(
                 isbn,
@@ -92,6 +89,16 @@ public class GoogleBookApi implements IBookApi {
                 volumeInfo.getDescription(),
                 volumeInfo.getPageCount()
         );
+    }
+
+    private static List<Author> getAuthorList(VolumeInfo volumeInfo) {
+        List<Author> authorList = new ArrayList<>();
+        if (volumeInfo.getAuthors() != null) {
+            for (String authorName : volumeInfo.getAuthors()) {
+                authorList.add(new Author(authorName));
+            }
+        }
+        return authorList;
     }
 
     /** Build URL for Google API Request

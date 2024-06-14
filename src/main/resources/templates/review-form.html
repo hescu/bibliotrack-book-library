@@ -10,7 +10,7 @@
 
     <main class="container">
         <h1>Write a review</h1>
-        <form th:action="@{/my-library/review/submit-review}" th:method="post" th:object="reviewForm">
+        <form th:action="@{/my-library/review/submit-review}" th:method="post" th:object="${reviewForm}">
 
             <label for="rating">Rating (1-5):</label><br>
             <select id="rating" name="rating" required>
