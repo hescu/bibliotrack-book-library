@@ -1,6 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.logging.Loggable;
+import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.forms.AddToBookshelfFormData;
 import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
 import codingnomads.bibliotrackbooklibrary.model.forms.RemoveFromBookshelfFormData;
@@ -132,16 +133,16 @@ public class LibraryController {
         return "my-library";
     }
 
-    @GetMapping("/review-form")
-    public ModelAndView reviewForm() {
-        return new ModelAndView("review-form", "reviewForm", new ReviewForm());
-    }
-
     @GetMapping("/review-form/{isbn}")
     public String getReviewForm(@PathVariable("isbn") String isbn, Model model) {
         ReviewForm reviewForm = new ReviewForm();
         reviewForm.setIsbn(isbn);
+
+        Book bookInfo = libraryService.getBookFromDatabase(isbn);
+
         model.addAttribute("reviewForm", reviewForm);
+        model.addAttribute("bookInfo", bookInfo);
+
         return "review-form";
     }
 

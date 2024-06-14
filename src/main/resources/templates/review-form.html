@@ -10,7 +10,18 @@
 
     <main class="container">
         <h1>Write a review</h1>
-        <form th:action="@{/my-library/review/submit-review}" th:method="post" th:object="${reviewForm}">
+
+        <div class="container">
+            <h3 th:text="bookInfo.title"></h3>
+            <p th:text="bookInfo.isbn"></p>
+            <td>
+                <ul style="list-style-type:none;">
+                    <li th:each="author : ${bookInfo.authors}" th:text="${author.name}"></li>
+                </ul>
+            </td>
+        </div>
+
+        <form th:action="@{/my-library/review-form/submit-review}" th:method="post" th:object="${reviewForm}">
 
             <label for="rating">Rating (1-5):</label><br>
             <select id="rating" name="rating" required>

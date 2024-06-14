@@ -2,6 +2,7 @@ package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
 import codingnomads.bibliotrackbooklibrary.dao.PostReviewApi;
+import codingnomads.bibliotrackbooklibrary.exception.BookNotFoundException;
 import codingnomads.bibliotrackbooklibrary.model.*;
 import codingnomads.bibliotrackbooklibrary.model.forms.ReviewForm;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
@@ -192,6 +193,14 @@ public class LibraryService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove book from bookshelf: " + e.getMessage());
         }
+    }
+
+    public Book getBookFromDatabase(String isbn) {
+        Book book = libraryMapper.findBookByIsbn(isbn);
+        if (book == null) {
+            throw new BookNotFoundException("Book with ISBN " + isbn + " not found");
+        }
+        return book;
     }
 
     public void postReview(ReviewForm reviewForm) {
