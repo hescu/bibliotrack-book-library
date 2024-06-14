@@ -75,6 +75,7 @@ public class UserPrincipalService implements UserDetailsService {
         userPrincipal.setPassword(passwordEncoder.encode(userPrincipal.getPassword()));
 
         try {
+            System.out.println("TRYING TO CREATE USERPRINCIPAL");
             User newUser = new User();
             newUser.setWishlist(new Wishlist());
 
@@ -89,6 +90,7 @@ public class UserPrincipalService implements UserDetailsService {
             newUser.setBookshelves(Collections.singletonList(newBookshelf));
             userRepo.save(newUser);
         } catch (Exception e) {
+            System.out.println("EXCEPTION: " + e.getMessage());
             throw new IllegalStateException(e.getMessage(), e.getCause());
         }
     }
