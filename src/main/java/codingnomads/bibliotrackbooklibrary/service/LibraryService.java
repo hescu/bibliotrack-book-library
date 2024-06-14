@@ -105,6 +105,17 @@ public class LibraryService {
         return null;
     }
 
+    private String getCurrentUserName() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            Object principal = auth.getPrincipal();
+            if (principal instanceof UserPrincipal userPrincipal) {
+                return userPrincipal.getUsername();
+            }
+        }
+        return "";
+    }
+
     /**
      * Fetch books from wishlist.
      *
@@ -205,6 +216,7 @@ public class LibraryService {
 
     public void postReview(ReviewForm reviewForm) {
         try {
+            reviewForm.setUsername(getCurrentUserName());
             postReviewApi.postReview(reviewForm);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

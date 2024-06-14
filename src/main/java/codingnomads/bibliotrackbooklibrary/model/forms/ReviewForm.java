@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 public class ReviewForm {
 
+    private String username;
     private String isbn;
     private int rating;
     private String review;

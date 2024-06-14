@@ -6,6 +6,8 @@ import codingnomads.bibliotrackbooklibrary.model.User;
 import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
 import codingnomads.bibliotrackbooklibrary.mybatis.UserPrincipalMapper;
+import codingnomads.bibliotrackbooklibrary.repository.BookshelfRepo;
+import codingnomads.bibliotrackbooklibrary.repository.UserRepo;
 import codingnomads.bibliotrackbooklibrary.repository.security.AuthorityRepo;
 import codingnomads.bibliotrackbooklibrary.repository.security.UserPrincipalRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,12 @@ public class UserPrincipalService implements UserDetailsService {
 
     @Autowired
     UserPrincipalMapper userPrincipalMapper;
+
+    @Autowired
+    UserRepo userRepo;
+
+    @Autowired
+    BookshelfRepo bookshelfRepo;
 
     @Override
     public UserPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -76,7 +84,15 @@ public class UserPrincipalService implements UserDetailsService {
 
     private User createNewUser() {
         User newUser = new User();
-        newUser.getBookshelves().add(new Bookshelf());
+        Bookshelf newBookshelf = new Bookshelf();
+        newUser.getBookshelves().add(newBookshelf);
+        newBookshelf.setUser(newUser);
+        try {
+            bookshelfRepo.save(newBookshelf);
+            userRepo.save(newUser);
+        } catch (Exception e) {
+            throw new IllegalStateException(e.getMessage(), e.getCause());
+        }
         return newUser;
     }
 
