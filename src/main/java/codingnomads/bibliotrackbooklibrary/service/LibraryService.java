@@ -84,7 +84,7 @@ public class LibraryService {
             Long wishlistId = Objects.requireNonNull(getCurrentUser()).getWishlist().getId();
             libraryMapper.removeBookFromWishlist(wishlistId, bookId);
             Optional<Wishlist> optionalWishlist = wishlistRepo.findById(wishlistId);
-             return optionalWishlist.orElseThrow();
+            return optionalWishlist.orElseThrow();
         } catch (Exception e) {
             throw new RuntimeException("Failed to remove book from wishlist: " + e.getMessage());
         }

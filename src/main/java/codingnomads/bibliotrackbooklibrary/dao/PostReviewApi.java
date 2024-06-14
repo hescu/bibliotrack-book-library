@@ -22,11 +22,10 @@ public class PostReviewApi implements IPostReviewApi{
             headers.set("Content-Type", "application/json");
             HttpEntity<String> entity = new HttpEntity<>(reviewFormAsJson, headers);
 
-            String postReviewEndpoint = "https://m09d3.wiremockapi.cloud/";
+            String postReviewEndpoint = "https://m09d3.wiremockapi.cloud/reviews";
             ResponseEntity<String> response = restTemplate.exchange(postReviewEndpoint, HttpMethod.POST, entity, String.class);
             HttpStatusCode statusCode = response.getStatusCode();
             HttpStatus httpStatus = HttpStatus.valueOf(statusCode.value());
-            System.out.println("Response Status Code: " + httpStatus);
         } catch (RestClientException e) {
             throw new RuntimeException("Error while posting review: " + e.getMessage(), e);
         }
