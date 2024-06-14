@@ -31,7 +31,7 @@ public class UserController {
             UserPrincipal newUserPrincipal = new UserPrincipal();
             newUserPrincipal.setUsername(username);
             newUserPrincipal.setPassword(password);
-            customUserDetailsService.createNewUser(newUserPrincipal);
+            customUserDetailsService.createNewUserPrincipal(newUserPrincipal);
             redirectAttributes.addFlashAttribute("registerSuccessMessage", "User registered successfully");
             return "redirect:/login";
         } catch (UserExceptions.UsernameAlreadyExistsException e) {

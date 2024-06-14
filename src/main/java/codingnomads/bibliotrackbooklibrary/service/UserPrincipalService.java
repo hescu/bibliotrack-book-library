@@ -1,6 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.service;
 
 import codingnomads.bibliotrackbooklibrary.exception.UserExceptions;
+import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
 import codingnomads.bibliotrackbooklibrary.model.User;
 import codingnomads.bibliotrackbooklibrary.model.security.Authority;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
@@ -43,9 +44,8 @@ public class UserPrincipalService implements UserDetailsService {
      * Create new user principal.
      *
      * @param userPrincipal the user principal
-     * @return the user principal
      */
-    public UserPrincipal createNewUser(UserPrincipal userPrincipal) {
+    public void createNewUserPrincipal(UserPrincipal userPrincipal) {
         if (!checkIfUsernameAlreadyExists(userPrincipal.getUsername())) {
             throw new UserExceptions.UsernameAlreadyExistsException(userPrincipal.getUsername());
         }
@@ -55,7 +55,9 @@ public class UserPrincipalService implements UserDetailsService {
         userPrincipal.setAccountNonLocked(true);
         userPrincipal.setCredentialsNonExpired(true);
         userPrincipal.setEnabled(true);
-        userPrincipal.setUser(new User());
+
+        User newUser = createNewUser();
+        userPrincipal.setUser(newUser);
 
         Optional<Authority> auth = authorityRepo.findById(2L);
         auth.ifPresent(authority -> userPrincipal
@@ -66,10 +68,16 @@ public class UserPrincipalService implements UserDetailsService {
         userPrincipal.setPassword(passwordEncoder.encode(userPrincipal.getPassword()));
 
         try {
-            return userPrincipalRepo.save(userPrincipal);
+            userPrincipalRepo.save(userPrincipal);
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e.getCause());
         }
+    }
+
+    private User createNewUser() {
+        User newUser = new User();
+        newUser.getBookshelves().add(new Bookshelf());
+        return newUser;
     }
 
     /**

@@ -12,13 +12,13 @@
         <h1>Write a review</h1>
 
         <div class="container">
-            <h3 th:text="bookInfo.title"></h3>
-            <p th:text="bookInfo.isbn"></p>
-            <td>
+            <h3 th:text="${bookInfo.title}"></h3>
+            <p th:text="${bookInfo.isbn}"></p>
+            <div>
                 <ul style="list-style-type:none;">
                     <li th:each="author : ${bookInfo.authors}" th:text="${author.name}"></li>
                 </ul>
-            </td>
+            </div>
         </div>
 
         <form th:action="@{/my-library/review-form/submit-review}" th:method="post" th:object="${reviewForm}">

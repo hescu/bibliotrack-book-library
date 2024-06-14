@@ -21,7 +21,7 @@ public class User {
     @JoinColumn(name = "wishlist_id", referencedColumnName = "id", nullable = false)
     private Wishlist wishlist;
 
-    @Transient
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Bookshelf> bookshelves;
 
     public User() {

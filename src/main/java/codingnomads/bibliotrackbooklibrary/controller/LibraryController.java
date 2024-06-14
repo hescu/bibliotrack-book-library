@@ -146,7 +146,7 @@ public class LibraryController {
         return "review-form";
     }
 
-    @PostMapping("/my-library/review-form/submit-review")
+    @PostMapping("/review-form/submit-review")
     public String submitReview(@ModelAttribute("reviewForm") ReviewForm reviewForm, Model model) {
         libraryService.postReview(reviewForm);
         return displayMyLibrary(model);
