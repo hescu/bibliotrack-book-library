@@ -26,7 +26,7 @@ public class UserController {
      * @throws Exception the exception
      */
     @PostMapping(path = "/register")
-    public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) throws Exception {
+    public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) throws RuntimeException {
         try {
             UserPrincipal newUserPrincipal = new UserPrincipal();
             newUserPrincipal.setUsername(username);
@@ -34,7 +34,7 @@ public class UserController {
             customUserDetailsService.createNewUserPrincipal(newUserPrincipal);
             redirectAttributes.addFlashAttribute("registerSuccessMessage", "User registered successfully");
             return "redirect:/login";
-        } catch (UserExceptions.UsernameAlreadyExistsException e) {
+        } catch (UserExceptions.UsernameAlreadyExistsException | UserExceptions.InvalidUsernameException e) {
             redirectAttributes.addFlashAttribute("usernameErrorMessage", e.getMessage());
             return "redirect:/register";
         } catch (UserExceptions.InvalidPasswordException e) {

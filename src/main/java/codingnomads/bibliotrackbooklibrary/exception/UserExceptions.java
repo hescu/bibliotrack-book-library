@@ -17,4 +17,11 @@ public class UserExceptions {
             super(message);
         }
     }
+
+    @ResponseStatus
+    public static class InvalidUsernameException extends RuntimeException {
+        public InvalidUsernameException(String message) {
+            super(message);
+        }
+    }
 }

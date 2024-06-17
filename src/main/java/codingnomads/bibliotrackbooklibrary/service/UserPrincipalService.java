@@ -54,9 +54,7 @@ public class UserPrincipalService implements UserDetailsService {
      */
     @Transactional
     public void createNewUserPrincipal(UserPrincipal userPrincipal) {
-        if (!checkIfUsernameAlreadyExists(userPrincipal.getUsername())) {
-            throw new UserExceptions.UsernameAlreadyExistsException(userPrincipal.getUsername());
-        }
+        checkUsername(userPrincipal.getUsername());
         checkPassword(userPrincipal.getPassword());
         userPrincipal.setId(null);
         userPrincipal.setAccountNonExpired(true);
@@ -93,6 +91,7 @@ public class UserPrincipalService implements UserDetailsService {
             throw new IllegalStateException(e.getMessage(), e.getCause());
         }
     }
+
 
     private User createNewUser() {
         User newUser = new User();
@@ -138,7 +137,15 @@ public class UserPrincipalService implements UserDetailsService {
         }
     }
 
-    private boolean checkIfUsernameAlreadyExists(String username) {
-        return userPrincipalMapper.countUsernames(username) == 0;
+    private void checkUsername(String username) {
+        if (username == null) {
+            throw new UserExceptions.InvalidUsernameException("You must enter a username");
+        }
+        if (username.length() > 70) {
+            throw new UserExceptions.InvalidUsernameException("Username too long. Username cannot be longer than 70 characters.");
+        }
+        if (userPrincipalMapper.countUsernames(username) > 0) {
+            throw new UserExceptions.UsernameAlreadyExistsException(username);
+        }
     }
 }
