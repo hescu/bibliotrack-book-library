@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
     <style>
         .login-container {
             max-width: 400px;
@@ -13,10 +14,19 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         .login-form {
             margin-bottom: 20px;
         }
-        .login-form input[type="text"],
+
+        .login-form input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
         .login-form input[type="password"] {
             width: 100%;
             padding: 10px;
@@ -24,6 +34,7 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
+
         .login-form button {
             width: 100%;
             padding: 10px;
@@ -34,24 +45,51 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         .login-form button:hover {
             background-color: #0056b3;
         }
+
         .back-button {
             text-align: center;
         }
+
         .back-button a {
             color: #007bff;
             text-decoration: none;
         }
+
         .register-button {
             text-align: center;
             margin-bottom: 10px;
         }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+
+        .alert-danger {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+
     </style>
 </head>
 <body>
-    <div class="login-container pico">
+    <div th:if="${registerSuccessMessage}" class="alert alert-success" th:text="${registerSuccessMessage}"></div>
+    <div th:if="${loginErrorMessage}" class="alert alert-danger" th:text="${loginErrorMessage}"></div>
+
+    <div class="login-container container">
         <h2>Login</h2>
         <form class="login-form" action="/login" method="post">
             <label>

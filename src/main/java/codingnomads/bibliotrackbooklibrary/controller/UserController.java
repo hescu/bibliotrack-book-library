@@ -27,7 +27,6 @@ public class UserController {
      */
     @PostMapping(path = "/register")
     public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) throws Exception {
-        System.out.println("REGISTERING NEW USER: " + username);
         try {
             UserPrincipal newUserPrincipal = new UserPrincipal();
             newUserPrincipal.setUsername(username);
