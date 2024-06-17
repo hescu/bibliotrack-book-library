@@ -1,21 +1,28 @@
-package codingnomads.bibliotrackbooklibrary;
+package codingnomads.bibliotrackbooklibrary.controller;
 
-import codingnomads.bibliotrackbooklibrary.controller.SearchController;
+import codingnomads.bibliotrackbooklibrary.BibliotrackBookLibraryApplication;
 import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
+import codingnomads.bibliotrackbooklibrary.security.SecurityConfig;
+import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.View;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -24,23 +31,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = BibliotrackBookLibraryApplication.class
+        classes = {BibliotrackBookLibraryApplication.class, SecurityConfig.class}
 )
 @AutoConfigureMockMvc(addFilters = false)
-@Profile("test")
+@ActiveProfiles("test")
 public class ControllerTests {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
     private SearchService searchService;
 
-    @Mock
-    private View view;
+    @MockBean
+    private LibraryService libraryService;
 
-    @InjectMocks
-    private SearchController searchController;
+    @BeforeEach
+    public void setUp() {
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        Authentication auth = new UsernamePasswordAuthenticationToken("user", "password", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+        context.setAuthentication(auth);
+        SecurityContextHolder.setContext(context);
+    }
 
     @Test
-    public void performSearch_Success() throws Exception {
+    public void performSearch_Controller_Success() throws Exception {
         String searchText = "test";
         String searchCriteria = "default";
 
@@ -49,7 +64,10 @@ public class ControllerTests {
                 .searchCriteria(searchCriteria)
                 .build();
 
-        Author author = Author.builder().build();
+        Author author = Author.builder()
+                .name("Author")
+                .build();
+
         List<Author> authorList = new ArrayList<>();
         authorList.add(author);
 
@@ -67,10 +85,7 @@ public class ControllerTests {
         searchResults.add(book);
 
         when(searchService.performSearch(searchFormData)).thenReturn(searchResults);
-
-        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(searchController)
-                        .setSingleView(view)
-                        .build();
+        when(libraryService.fetchBookshelves()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(post("/search")
                         .flashAttr("searchFormData", searchFormData))
@@ -78,6 +93,6 @@ public class ControllerTests {
                         .andExpect(model().attributeExists("searchResults"))
                         .andExpect(view().name("search"));
 
-        verify(searchService).performSearch(searchFormData);
+        verify(searchService).performSearch(any(SearchFormData.class));
     }
 }

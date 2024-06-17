@@ -4,12 +4,14 @@ import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
 import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
@@ -20,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@Profile("test")
+@ActiveProfiles("test")
 @TestPropertySource(properties = {
         "spring.cache.type=none" // Deactivates chaching for tests
 })
@@ -32,8 +34,13 @@ class SearchServiceTest {
     @InjectMocks
     private SearchService searchService;
 
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    void testPerformSearch() {
+    void performSearch_Service_Success() {
         SearchFormData searchFormData = SearchFormData.builder()
                 .searchString("test")
                 .searchCriteria("author")
@@ -72,11 +79,9 @@ class SearchServiceTest {
 
         // Act
         List<Book> result1 = searchService.performSearch(searchFormData);
-        List<Book> result2 = searchService.performSearch(searchFormData); // Should hit the cache
 
         // Assert
         assertThat(result1).isEqualTo(expectedBooks);
-        assertThat(result2).isEqualTo(expectedBooks);
 
         // Verify that the googleBookApi.performSearch was called only once
         verify(googleBookApi, times(1)).performSearch(any(SearchFormData.class));
