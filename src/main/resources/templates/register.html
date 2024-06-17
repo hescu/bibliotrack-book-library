@@ -12,12 +12,12 @@
         <h2>User Registration</h2>
         <form th:action="@{/register}" method="post">
             <div>
-                <label for="username">Username:</label>
+                <label for="username">Username:<span data-tooltip="Length: 70 characters or fewer. Spaces will be removed." data-placement="right">&#9432;</span></label>
                 <input type="text" id="username" name="username" required>
             </div>
             <p th:if="${usernameErrorMessage}" th:text="${usernameErrorMessage}"></p>
             <div>
-                <label for="password">Password:</label>
+                <label for="password">Password:<span data-tooltip="Min. 6 characters" data-placement="right">&#9432;</span></label>
                 <input type="password" id="password" name="password" required>
             </div>
             <p th:if="${passwordErrorMessage}" th:text="${passwordErrorMessage}"></p>
