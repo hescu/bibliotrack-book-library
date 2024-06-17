@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <title>My Library</title>
     <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
+
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
     <main class="container">
         <div class="wishlist-container">

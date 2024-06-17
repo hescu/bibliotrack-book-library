@@ -4,6 +4,6 @@ import codingnomads.bibliotrackbooklibrary.model.forms.ReviewForm;
 
 public interface IPostReviewApi {
 
-    void postReview(ReviewForm reviewForm);
+    boolean postReview(ReviewForm reviewForm);
 
 }

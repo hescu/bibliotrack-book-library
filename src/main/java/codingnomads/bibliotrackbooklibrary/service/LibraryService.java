@@ -214,13 +214,9 @@ public class LibraryService {
         return book;
     }
 
-    public void postReview(ReviewForm reviewForm) {
-        try {
-            reviewForm.setUsername(getCurrentUserName());
-            postReviewApi.postReview(reviewForm);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+    public boolean postReview(ReviewForm reviewForm) {
+        reviewForm.setUsername(getCurrentUserName());
+        return postReviewApi.postReview(reviewForm);
     }
 
     private void addBookToDB(Book book) {

@@ -147,8 +147,13 @@ public class LibraryController {
     }
 
     @PostMapping("/review-form/submit-review")
-    public String submitReview(@ModelAttribute("reviewForm") ReviewForm reviewForm, Model model) {
-        libraryService.postReview(reviewForm);
-        return displayMyLibrary(model);
+    public String submitReview(@ModelAttribute("reviewForm") ReviewForm reviewForm, Model model, RedirectAttributes redirectAttributes) {
+        boolean isSuccessful = libraryService.postReview(reviewForm);
+        if (isSuccessful) {
+            redirectAttributes.addFlashAttribute("successMessage", "Review posted successfully!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to post review. Please try again.");
+        }
+        return "redirect:/my-library";
     }
 }

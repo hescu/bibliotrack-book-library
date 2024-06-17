@@ -15,7 +15,7 @@ public class PostReviewApi implements IPostReviewApi{
     RestTemplate restTemplate;
 
     @Override
-    public void postReview(ReviewForm reviewForm) {
+    public boolean postReview(ReviewForm reviewForm) {
         String reviewFormAsJson = jsonifyForm(reviewForm);
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -26,8 +26,9 @@ public class PostReviewApi implements IPostReviewApi{
             ResponseEntity<String> response = restTemplate.exchange(postReviewEndpoint, HttpMethod.POST, entity, String.class);
             HttpStatusCode statusCode = response.getStatusCode();
             HttpStatus httpStatus = HttpStatus.valueOf(statusCode.value());
+            return httpStatus.is2xxSuccessful();
         } catch (RestClientException e) {
-            throw new RuntimeException("Error while posting review: " + e.getMessage(), e);
+            return false;
         }
     }
 

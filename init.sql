@@ -1,3 +1,5 @@
+START TRANSACTION;
+
 CREATE DATABASE IF NOT EXISTS bibliotrack;
 
 USE bibliotrack;
@@ -109,3 +111,5 @@ SELECT @admin_user_id, id FROM authority WHERE authority = 'ROLE_ADMIN';
 
 INSERT INTO bookshelf (user_id)
 VALUES (@user_id);
+
+COMMIT;
