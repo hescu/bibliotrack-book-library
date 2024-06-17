@@ -19,7 +19,7 @@ public class SearchService {
      * @param searchFormData The {@link SearchFormData} from the user request.
      * @return A list of {@link Book}
      */
-//    @Cacheable(value = "searchResultsCache")
+    @Cacheable(value = "searchResultsCache")
     public List<Book> performSearch(SearchFormData searchFormData) {
         return googleBookApi.performSearch(searchFormData);
     }
