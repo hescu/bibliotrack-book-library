@@ -23,7 +23,7 @@ public class UserController {
      * @param password           the password
      * @param redirectAttributes the redirect attributes
      * @return the string
-     * @throws Exception the exception
+     * @throws UserExceptions.UsernameAlreadyExistsException the exception
      */
     @PostMapping(path = "/register")
     public String registerNewUser(@RequestParam String username, @RequestParam String password, RedirectAttributes redirectAttributes) throws RuntimeException {
@@ -51,12 +51,13 @@ public class UserController {
      * @throws Exception the exception
      */
     @PostMapping(path = "/admin/delete_user/{id}")
-    public String deleteUser(@PathVariable Long id) throws Exception {
+    public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             customUserDetailsService.deleteUserById(id);
             return "redirect:/admin";
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
+        } catch (UserExceptions.OperationUnsuccessfulException e) {
+            redirectAttributes.addFlashAttribute("operationUnsuccessful", e.getMessage());
+            return "redirect:/admin";
         }
     }
 }

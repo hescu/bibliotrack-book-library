@@ -24,4 +24,11 @@ public class UserExceptions {
             super(message);
         }
     }
+
+    @ResponseStatus
+    public static class OperationUnsuccessfulException extends RuntimeException {
+        public OperationUnsuccessfulException(String message) {
+            super("Operation was not successful. Please try again.");
+        }
+    }
 }
