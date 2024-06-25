@@ -94,7 +94,7 @@ public class LibraryService {
      * Gets user from current context
      * @return The current user from context.
      */
-    private User getCurrentUser() {
+    User getCurrentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             Object principal = auth.getPrincipal();
@@ -142,7 +142,7 @@ public class LibraryService {
         return new HashSet<>();
     }
 
-    private Wishlist getCurrentUserWishlist(Long wishlistId) {
+    Wishlist getCurrentUserWishlist(Long wishlistId) {
         Optional<Wishlist> optionalWishlist = wishlistRepo.findById(wishlistId);
         return optionalWishlist.orElse(null);
     }
