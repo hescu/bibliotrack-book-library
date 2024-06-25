@@ -105,7 +105,7 @@ public class LibraryService {
         return null;
     }
 
-    private String getCurrentUserName() {
+    String getCurrentUserName() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             Object principal = auth.getPrincipal();
@@ -219,7 +219,7 @@ public class LibraryService {
         return postReviewApi.postReview(reviewForm);
     }
 
-    private void addBookToDB(Book book) {
+    void addBookToDB(Book book) {
         libraryMapper.addBookToDB(book);
         for (Author author : book.getAuthors()) {
             libraryMapper.addAuthorToDB(author);
