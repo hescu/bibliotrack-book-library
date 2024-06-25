@@ -20,7 +20,9 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -59,20 +61,17 @@ public class LibraryServiceTest {
         currentUser.setWishlist(wishlist);
 
         doReturn(currentUser).when(libraryServiceMock).getCurrentUser();
-        doReturn(wishlist).when(libraryServiceMock).getCurrentUserWishlist(1L);
     }
 
     @Test
     public void addBookToWishlist_BookExistsInDb() throws Exception {
-        // Arrange
         String isbn = "1234567890";
         when(libraryMapperMock.findBookByIsbn(isbn)).thenReturn(book);
         when(wishlistRepoMock.save(any(Wishlist.class))).thenReturn(wishlist);
+        when(libraryServiceMock.getCurrentUserWishlist(anyLong())).thenReturn(wishlist);
 
-        // Act
         libraryServiceMock.addBookToWishlist(isbn);
 
-        // Assert
         verify(libraryMapperMock, times(1)).findBookByIsbn(isbn);
         verify(googleBookApiMock, times(0)).searchBookByIsbn(anyString());
         verify(wishlistRepoMock, times(1)).save(wishlist);
@@ -80,18 +79,42 @@ public class LibraryServiceTest {
 
     @Test
     public void addBookToWishlist_BookNotInDb() throws Exception {
-        // Arrange
         String isbn = "1234567890";
         when(libraryMapperMock.findBookByIsbn(isbn)).thenReturn(null);
         when(googleBookApiMock.searchBookByIsbn(isbn)).thenReturn(book);
         when(wishlistRepoMock.save(any(Wishlist.class))).thenReturn(wishlist);
+        when(libraryServiceMock.getCurrentUserWishlist(anyLong())).thenReturn(wishlist);
 
-        // Act
         libraryServiceMock.addBookToWishlist(isbn);
 
-        // Assert
         verify(libraryMapperMock, times(1)).findBookByIsbn(isbn);
         verify(googleBookApiMock, times(1)).searchBookByIsbn(isbn);
         verify(wishlistRepoMock, times(1)).save(wishlist);
+    }
+
+    @Test
+    void removeBookFromWishlist_Success() {
+        Long bookId = 1L;
+        when(wishlistRepoMock.findById(anyLong())).thenReturn(Optional.of(wishlist));
+
+        Wishlist result = libraryServiceMock.removeBookFromWishlist(bookId);
+
+        verify(libraryMapperMock, times(1)).removeBookFromWishlist(wishlist.getId(), bookId);
+        verify(wishlistRepoMock, times(1)).findById(wishlist.getId());
+        assertEquals(result.getId(), wishlist.getId());
+    }
+
+    @Test
+    public void removeBookFromWishlist_Failure() {
+        Long bookId = 1L;
+        when(wishlistRepoMock.findById(anyLong())).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            libraryServiceMock.removeBookFromWishlist(bookId);
+        });
+
+        assertTrue(exception.getMessage().contains("Failed to remove book from wishlist"));
+        verify(libraryMapperMock, times(1)).removeBookFromWishlist(wishlist.getId(), bookId);
+        verify(wishlistRepoMock, times(1)).findById(wishlist.getId());
     }
 }
