@@ -4,7 +4,7 @@ import codingnomads.bibliotrackbooklibrary.BibliotrackBookLibraryApplication;
 import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
-import codingnomads.bibliotrackbooklibrary.security.SecurityConfig;
+import codingnomads.bibliotrackbooklibrary.configuration.SecurityConfig;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.junit.jupiter.api.BeforeEach;
