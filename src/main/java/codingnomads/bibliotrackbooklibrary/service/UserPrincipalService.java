@@ -54,6 +54,7 @@ public class UserPrincipalService implements UserDetailsService {
      */
     @Transactional
     public void createNewUserPrincipal(UserPrincipal userPrincipal) {
+        userPrincipal.setUsername(userPrincipal.getUsername().replaceAll("\\s+", ""));
         checkUsername(userPrincipal.getUsername());
         checkPassword(userPrincipal.getPassword());
         userPrincipal.setId(null);

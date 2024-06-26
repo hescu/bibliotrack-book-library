@@ -10,6 +10,7 @@
 
     <main>
         <h2>User Table</h2>
+        <div th:if="${operationUnsuccessful}" class="alert alert-danger" th:text="${operationUnsuccessful}"></div>
         <table>
             <thead>
             <tr>
