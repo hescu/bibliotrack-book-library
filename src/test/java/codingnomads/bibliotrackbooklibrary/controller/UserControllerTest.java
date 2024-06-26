@@ -7,6 +7,7 @@ import codingnomads.bibliotrackbooklibrary.security.SecurityConfig;
 import codingnomads.bibliotrackbooklibrary.service.UserPrincipalService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,22 +70,32 @@ class UserControllerTest {
 
     @Test
     public void registerNewUser_UsernameAlreadyExists() throws Exception {
-        doThrow(new UserExceptions.UsernameAlreadyExistsException("AlreadyExistingUsername")).when(customUserDetailsServiceMock).createNewUserPrincipal(newUserPrincipal);
+        String testUsername = "testUser";
+        ArgumentCaptor<UserPrincipal> captor = ArgumentCaptor.forClass(UserPrincipal.class);
+
+        doThrow(new UserExceptions.UsernameAlreadyExistsException(newUserPrincipal.getUsername()))
+                .when(customUserDetailsServiceMock).createNewUserPrincipal(captor.capture());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                        .param("username", "testUser")
+                        .param("username", testUsername)
                         .param("password", "testPassword"))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/register"))
-                .andExpect(MockMvcResultMatchers.flash().attribute("usernameErrorMessage", "Username already exists"));
+                .andExpect(MockMvcResultMatchers.flash().attribute("usernameErrorMessage",
+                        "The username '" + testUsername + "' already exists. " +
+                                "Please choose a different username."));
     }
 
     @Test
     public void registerNewUser_InvalidUsername() throws Exception {
-        doThrow(new UserExceptions.InvalidUsernameException("Invalid username")).when(customUserDetailsServiceMock).createNewUserPrincipal(newUserPrincipal);
+        String testUsername = "testUser";
+        ArgumentCaptor<UserPrincipal> captor = ArgumentCaptor.forClass(UserPrincipal.class);
+
+        doThrow(new UserExceptions.InvalidUsernameException("Invalid username"))
+                .when(customUserDetailsServiceMock).createNewUserPrincipal(captor.capture());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                        .param("username", "invalidUser")
+                        .param("username", testUsername)
                         .param("password", "testPassword"))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/register"))
@@ -93,11 +104,15 @@ class UserControllerTest {
 
     @Test
     public void registerNewUser_InvalidPassword() throws Exception {
-        doThrow(new UserExceptions.InvalidPasswordException("Invalid password")).when(customUserDetailsServiceMock).createNewUserPrincipal(newUserPrincipal);
+        String testPassword = "invalidPassword";
+        ArgumentCaptor<UserPrincipal> captor = ArgumentCaptor.forClass(UserPrincipal.class);
+
+        doThrow(new UserExceptions.InvalidPasswordException("Invalid password"))
+                .when(customUserDetailsServiceMock).createNewUserPrincipal(captor.capture());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
                         .param("username", "testUser")
-                        .param("password", "invalidPassword"))
+                        .param("password", testPassword))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/register"))
                 .andExpect(MockMvcResultMatchers.flash().attribute("passwordErrorMessage", "Invalid password"));
@@ -116,11 +131,11 @@ class UserControllerTest {
     @Test
     public void deleteUser_ExceptionThrown() throws Exception {
         Long userId = 1L;
-        doThrow(new Exception("User not found")).when(customUserDetailsServiceMock).deleteUserById(userId);
+        doThrow(new UserExceptions.OperationUnsuccessfulException("User not found")).when(customUserDetailsServiceMock).deleteUserById(userId);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/admin/delete_user/{id}", userId))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.forwardedUrl("/error"))
-                .andExpect(MockMvcResultMatchers.request().attribute("javax.servlet.error.message", "User not found"));
+                .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/admin"))
+                .andExpect(MockMvcResultMatchers.flash().attribute("operationUnsuccessful", "Operation was not successful. Please try again."));
     }
 }
