@@ -54,7 +54,7 @@ public class UserPrincipalService implements UserDetailsService {
      */
     @Transactional
     public void createNewUserPrincipal(UserPrincipal userPrincipal) {
-        userPrincipal.setUsername(userPrincipal.getUsername().replaceAll("\\s+", ""));
+        userPrincipal.setUsername(removeWhitespaces(userPrincipal.getUsername()));
         checkUsername(userPrincipal.getUsername());
         checkPassword(userPrincipal.getPassword());
         userPrincipal.setId(null);
@@ -148,5 +148,9 @@ public class UserPrincipalService implements UserDetailsService {
         if (userPrincipalMapper.countUsernames(username) > 0) {
             throw new UserExceptions.UsernameAlreadyExistsException(username);
         }
+    }
+
+    private String removeWhitespaces(String str) {
+        return str.replaceAll("\\s+", "");
     }
 }
