@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class SearchService {
@@ -21,7 +22,11 @@ public class SearchService {
      */
     @Cacheable(value = "searchResultsCache")
     public List<Book> performSearch(SearchFormData searchFormData) {
-        return googleBookApi.performSearch(searchFormData);
+        if (Objects.equals(searchFormData.getSearchString(), "all")) {
+            return googleBookApi.defaultSearch(searchFormData.getSearchString());
+        } else {
+            return googleBookApi.performSearch(searchFormData);
+        }
     }
 
     // For future use: pagination

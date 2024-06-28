@@ -1,4 +1,4 @@
-package codingnomads.bibliotrackbooklibrary.entity.response;
+package codingnomads.bibliotrackbooklibrary.model.response;
 
 import lombok.*;
 

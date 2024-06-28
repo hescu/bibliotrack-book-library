@@ -18,6 +18,15 @@ public interface IBookApi {
      */
     List<Book> performSearch(SearchFormData searchFormData);
 
+
+    /**
+     * Default search list.
+     *
+     * @param searchString the search string
+     * @return the list
+     */
+    List<Book> defaultSearch(String searchString);
+
     /**
      * Search book by isbn book.
      *

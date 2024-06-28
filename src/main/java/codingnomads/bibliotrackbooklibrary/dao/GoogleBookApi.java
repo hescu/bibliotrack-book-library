@@ -1,8 +1,8 @@
 package codingnomads.bibliotrackbooklibrary.dao;
 
-import codingnomads.bibliotrackbooklibrary.entity.response.GoogleBooksApiResponse;
-import codingnomads.bibliotrackbooklibrary.entity.response.Item;
-import codingnomads.bibliotrackbooklibrary.entity.response.VolumeInfo;
+import codingnomads.bibliotrackbooklibrary.model.response.GoogleBooksApiResponse;
+import codingnomads.bibliotrackbooklibrary.model.response.Item;
+import codingnomads.bibliotrackbooklibrary.model.response.VolumeInfo;
 import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Google books API.
@@ -38,7 +35,6 @@ public class GoogleBookApi implements IBookApi {
 
     @Override
     public List<Book> performSearch(SearchFormData searchFormData) {
-        System.out.println("PREFORMING SEARCH  =======================================");
         String requestUrl = buildGoogleRequestUrl(
                 searchFormData.getSearchString(),
                 searchFormData.getSearchCriteria(),
@@ -47,6 +43,14 @@ public class GoogleBookApi implements IBookApi {
         );
 
         return sendRequest(requestUrl);
+    }
+
+    @Override
+    public List<Book> defaultSearch(String searchString) {
+        final String ENDPOINT_DEFAULT_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?q=%s&key=%s";
+        String requestUrl = String.format(ENDPOINT_DEFAULT_SEARCH, searchString, googleBooksApiKey);
+        List<Book> foundBooks = sendRequest(requestUrl);
+        return Objects.requireNonNullElseGet(foundBooks, ArrayList::new);
     }
 
     @Override
