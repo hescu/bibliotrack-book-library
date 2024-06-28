@@ -21,6 +21,8 @@ import java.util.*;
 @Getter
 public class GoogleBookApi implements IBookApi {
 
+    //TODO Optimize search
+
     private final String ENDPOINT_BASE_URL = "https://www.googleapis.com";
     private final String ENDPOINT_GOOGLE_SEARCH = ENDPOINT_BASE_URL + "/books/v1/volumes?startIndex=%s&maxResults=%s&langRestrict=%s&q=%s:%s&key=%s";
     private final String LANGUAGE_RESTRICTION = "en";
