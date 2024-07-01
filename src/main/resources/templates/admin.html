@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin-Center</title>
-    <link rel="stylesheet" th:href="@{/css/pico.min.css}">
+    <link  th:replace="~{fragments/css-framework :: pico}">
 </head>
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
 
-    <main>
+    <main class="container">
         <h2>User Table</h2>
         <div th:if="${operationUnsuccessful}" class="alert alert-danger" th:text="${operationUnsuccessful}"></div>
         <table>

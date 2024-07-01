@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Header</title>
-    <link rel="stylesheet" th:href="@{/css/pico.min.css}">
+    <link  th:replace="~{fragments/css-framework :: pico}">
 </head>
 <body>
-<header th:fragment="header" class="pico container">
+<header th:fragment="header" class="container">
     <nav>
         <ul>
             <li><strong>BiblioTrack</strong></li>
