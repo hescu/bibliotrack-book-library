@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-    <link href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <link th:href="@{/css/pico.min.css}" rel="stylesheet" crossorigin="anonymous" />
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <script th:src="@{/js/search.js}" type="text/javascript"></script>
 </head>
@@ -29,7 +29,7 @@
 
         <div>
             <h3 th:unless="${searchResults.isEmpty()}">Search Results</h3>
-            <p th:unless="${searchResults.isEmpty()}">Total items found: <span th:text="${totalItemsFound}"></span></p>
+            <p th:if="${searchResults.isEmpty()}">No books found.</p>
             <div>
                 <div th:if="${message}" class="alert" th:classappend="|alert-message ${alertClass}|">
                     <p th:text="${message}"></p>

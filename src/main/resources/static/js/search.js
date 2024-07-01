@@ -2,6 +2,8 @@
         button.addEventListener('click', addToWishlist);
     });
 
+// TODO: don't refresh page after adding book to wishlist/bookshelf
+
 function addToWishlist(event) {
     const isbn = event.target.dataset.isbn;
 
