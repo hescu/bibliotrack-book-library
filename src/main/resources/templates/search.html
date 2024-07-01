@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
-    <link th:href="@{/css/pico.min.css}" rel="stylesheet" crossorigin="anonymous" />
+    <link  th:replace="~{fragments/css-framework :: pico}">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
     <script th:src="@{/js/search.js}" type="text/javascript"></script>
 </head>
@@ -29,7 +29,6 @@
 
         <div>
             <h3 th:unless="${searchResults.isEmpty()}">Search Results</h3>
-            <p th:if="${searchResults.isEmpty()}">No books found.</p>
             <div>
                 <div th:if="${message}" class="alert" th:classappend="|alert-message ${alertClass}|">
                     <p th:text="${message}"></p>
