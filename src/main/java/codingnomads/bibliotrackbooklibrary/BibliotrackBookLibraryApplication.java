@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 @SpringBootApplication
-@EnableCaching
+//@EnableCaching
 public class BibliotrackBookLibraryApplication {
 
 	@Autowired

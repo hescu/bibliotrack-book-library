@@ -1,5 +1,7 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
+import codingnomads.bibliotrackbooklibrary.exception.LibraryEntityExceptions;
+import codingnomads.bibliotrackbooklibrary.exception.SearchExceptions;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.Bookshelf;
 import codingnomads.bibliotrackbooklibrary.model.forms.AddToBookshelfFormData;
@@ -50,29 +52,30 @@ public class SearchController {
     @PostMapping()
     public String performSearch(@ModelAttribute("searchFormData") SearchFormData searchFormData,
                                 Model model) {
+        List<Book> searchResults;
+        List<Bookshelf> bookshelfList;
+        AddToBookshelfFormData addToBookshelfFormData = new AddToBookshelfFormData();
+
         if (searchFormData == null) {
             searchFormData = new SearchFormData();
         }
 
         // Perform search and handle possible null return
-        List<Book> searchResults = searchService.performSearch(searchFormData);
+        searchResults = searchService.performSearch(searchFormData);
         if (searchResults == null) {
-            searchResults = Collections.emptyList();
+            throw new SearchExceptions.SearchResultsNotFoundException("The search came up empty.");
         }
-        model.addAttribute("searchResults", searchResults);
-
-        // Check if addToBookshelfFormData and searchFormData need to be added to the model
-        AddToBookshelfFormData addToBookshelfFormData = new AddToBookshelfFormData();
-        model.addAttribute("addToBookshelfFormData", addToBookshelfFormData);
-
-        model.addAttribute("searchFormData", searchFormData);
 
         // Fetch bookshelves and handle possible null return
-        List<Bookshelf> bookshelfList = libraryService.fetchBookshelves();
+        bookshelfList = libraryService.fetchBookshelves();
         if (bookshelfList == null) {
-            bookshelfList = Collections.emptyList();
+            throw new LibraryEntityExceptions.BookshelfNotFoundException("The bookshelf couldn't be found.");
         }
+
         model.addAttribute("bookshelfList", bookshelfList);
+        model.addAttribute("searchResults", searchResults);
+        model.addAttribute("addToBookshelfFormData", addToBookshelfFormData);
+        model.addAttribute("searchFormData", searchFormData);
 
         return "search";
     }

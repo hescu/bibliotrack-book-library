@@ -2,6 +2,7 @@ package codingnomads.bibliotrackbooklibrary.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -29,5 +30,17 @@ public class GlobalDefaultExceptionHandler {
         mav.addObject("url", req.getRequestURL());
         mav.setViewName(DEFAULT_ERROR_VIEW);
         return mav;
+    }
+
+    @ExceptionHandler(SearchExceptions.SearchResultsNotFoundException.class)
+    public String handleSearchResultsNotFoundException(SearchExceptions.SearchResultsNotFoundException ex, Model model) {
+        model.addAttribute("errorMessage", ex.getMessage());
+        return "search";
+    }
+
+    @ExceptionHandler(LibraryEntityExceptions.BookshelfNotFoundException.class)
+    public String handleBookshelfNotFoundException(LibraryEntityExceptions.BookshelfNotFoundException ex, Model model) {
+        model.addAttribute("errorMessage", ex.getMessage());
+        return "search";
     }
 }

@@ -10,4 +10,11 @@ public class LibraryEntityExceptions {
             super(message);
         }
     }
+
+    @ResponseStatus
+    public static class BookshelfNotFoundException extends RuntimeException {
+        public BookshelfNotFoundException(String message) {
+            super(message);
+        }
+    }
 }
