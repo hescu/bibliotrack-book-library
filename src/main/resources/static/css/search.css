@@ -1,0 +1,45 @@
+.error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        font-family: Arial, sans-serif;
+        margin: 10px 0;
+    }
+
+.error-message p {
+    margin: 0;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.disabled-button {
+    background-color: #d3d3d3;
+    color: #666666;
+    cursor: not-allowed;
+    pointer-events: none;
+}

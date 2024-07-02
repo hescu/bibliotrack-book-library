@@ -4,14 +4,10 @@
     <meta charset="UTF-8">
     <title>Search</title>
     <link  th:replace="~{fragments/css-framework :: pico}">
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
-    <script th:src="@{/js/search.js}" type="text/javascript"></script>
+    <link rel="stylesheet" th:href="@{/css/search.css}" />
 </head>
 <body>
     <div th:replace="~{fragments/header :: header}"></div>
-    <div th:if="${errorMessage}" class="error-message">
-        <p th:text="${errorMessage}"></p>
-    </div>
     <main class="container">
         <section>
             <form th:action="@{/search}" th:object="${searchFormData}" method="post">
@@ -32,6 +28,9 @@
         <div>
             <h3 th:unless="${searchResults.isEmpty()}">Search Results</h3>
             <div>
+                <div th:if="${errorMessage}" class="error-message">
+                    <p th:text="${errorMessage}"></p>
+                </div>
                 <div th:if="${message}" class="alert" th:classappend="|alert-message ${alertClass}|">
                     <p th:text="${message}"></p>
                 </div>
@@ -59,12 +58,12 @@
                                     <p th:text="'Pages: ' + ${item.pageCount}"></p>
                                 </div>
                                 <div>
-                                    <form id="addToWishlistForm" th:action="@{/my-library/wishlist/add}" th:method="post">
+                                    <form id="addToWishlistForm" th:action="@{/search/wishlist/add}" th:method="post">
                                         <input type="hidden" name="isbn" th:value="${item.isbn}" />
                                         <button id="addToWishlistButton" type="submit">Add to wishlist</button>
                                     </form>
-                                    <form th:action="@{/my-library/bookshelf/add}" th:method="post" th:object="${addToBookshelfFormData}">
-                                        <button type="submit">Add to bookshelf</button>
+                                    <form th:action="@{/search/bookshelf/add}" th:method="post" th:object="${addToBookshelfFormData}">
+                                        <button id="addToBookshelfButton" type="submit">Add to bookshelf</button>
                                         <select th:field="*{bookshelfId}" aria-label="Select bookshelf..." required>
                                             <option selected disabled value="">Select bookshelf...</option>
                                             <option th:each="bookshelf : ${bookshelfList}" th:value="${bookshelf.id}" th:text="${bookshelf.name}"></option>

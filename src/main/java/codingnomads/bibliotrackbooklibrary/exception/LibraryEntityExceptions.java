@@ -5,11 +5,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class LibraryEntityExceptions {
 
     @ResponseStatus
-    public static class WishlistNotFound extends RuntimeException {
-        public WishlistNotFound(String message) {
+    public static class WishlistException extends RuntimeException {
+        public WishlistException(String message) {
             super(message);
         }
     }
+
 
     @ResponseStatus
     public static class BookshelfNotFoundException extends RuntimeException {

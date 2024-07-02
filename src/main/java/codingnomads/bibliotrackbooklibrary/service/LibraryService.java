@@ -3,6 +3,8 @@ package codingnomads.bibliotrackbooklibrary.service;
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
 import codingnomads.bibliotrackbooklibrary.dao.PostReviewApi;
 import codingnomads.bibliotrackbooklibrary.exception.BookNotFoundException;
+import codingnomads.bibliotrackbooklibrary.exception.LibraryEntityExceptions;
+import codingnomads.bibliotrackbooklibrary.exception.LibraryEntityExceptions.WishlistException;
 import codingnomads.bibliotrackbooklibrary.model.*;
 import codingnomads.bibliotrackbooklibrary.model.forms.ReviewForm;
 import codingnomads.bibliotrackbooklibrary.model.security.UserPrincipal;
@@ -51,24 +53,24 @@ public class LibraryService {
      * Add book to wishlist.
      *
      * @param isbn the book isbn
-     * @throws Exception if book can't be added to wishlist
+     * @throws WishlistException if book can't be added to wishlist
      */
     @Transactional
-    public void addBookToWishlist(String isbn) {
-        try {
-            User currentUser = getCurrentUser();
-            if (currentUser != null) {
-                Wishlist wishlist = getCurrentUserWishlist(currentUser.getWishlist().getId());
-                Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
-                if (bookFromDb != null) {
-                    wishlist.getBooks().add(bookFromDb);
-                } else {
-                    wishlist.getBooks().add(googleBookApi.searchBookByIsbn(isbn));
-                }
-                wishlistRepo.save(wishlist);
+    public void addBookToWishlist(String isbn) throws WishlistException {
+        User currentUser = getCurrentUser();
+        if (currentUser != null) {
+            Wishlist wishlist = getCurrentUserWishlist(currentUser.getWishlist().getId());
+            Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
+            if (wishlist.getBooks().contains(bookFromDb)) {
+                throw new WishlistException("Book is already on your wishlist.");
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+
+            if (bookFromDb != null) {
+                wishlist.getBooks().add(bookFromDb);
+            } else {
+                wishlist.getBooks().add(googleBookApi.searchBookByIsbn(isbn));
+            }
+            wishlistRepo.save(wishlist);
         }
     }
 
@@ -122,23 +124,14 @@ public class LibraryService {
      * @return the set of books
      */
     public Set<Book> fetchBooksFromWishlist() {
-        System.out.println("FETCHING BOOKS FROM WISHLIST");
         User currentUser = getCurrentUser();
         if (currentUser != null) {
-            System.out.println("CURRENT USER IS NOT NULL");
             Optional<Wishlist> wishlist = wishlistRepo.findById(currentUser.getWishlist().getId());
             if (wishlist.isPresent()) {
-                System.out.println("WISHLIST IS PRESENT");
-                for (Book b : wishlist.get().getBooks()) {
-                    System.out.println("BOOK ISBN: " + b.getIsbn());
-                }
-
-
                 return wishlist.get().getBooks();
             }
         }
 
-        System.out.println("RETURNING EMPTY SET FOR WISHLIST BOOKS");
         return new HashSet<>();
     }
 
@@ -156,7 +149,6 @@ public class LibraryService {
         User currentUser = getCurrentUser();
         if (currentUser != null) {
             List<Bookshelf> currentUserBookshelves = new ArrayList<>();
-            System.out.println("GETTING ALL BOOKSHELVES FOR USER");
             List<Long> bookshelfIds = libraryMapper.findAllBookshelvesIDsByUserId(currentUser.getId());
             for (Long id : bookshelfIds) {
                 currentUserBookshelves.add(bookshelfRepo.getReferenceById(id));
