@@ -61,7 +61,8 @@ public class LibraryService {
         if (currentUser != null) {
             Wishlist wishlist = getCurrentUserWishlist(currentUser.getWishlist().getId());
             Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
-            if (wishlist.getBooks().contains(bookFromDb)) {
+
+            if (wishlist.getBooks().stream().anyMatch(b -> b.getIsbn().equals(isbn))) {
                 throw new WishlistException("Book is already on your wishlist.");
             }
 
