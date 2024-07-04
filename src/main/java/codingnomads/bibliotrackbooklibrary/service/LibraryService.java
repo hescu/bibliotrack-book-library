@@ -60,12 +60,12 @@ public class LibraryService {
         User currentUser = getCurrentUser();
         if (currentUser != null) {
             Wishlist wishlist = getCurrentUserWishlist(currentUser.getWishlist().getId());
-            Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
 
             if (wishlist.getBooks().stream().anyMatch(b -> b.getIsbn().equals(isbn))) {
                 throw new WishlistException("Book is already on your wishlist.");
             }
 
+            Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
             if (bookFromDb != null) {
                 wishlist.getBooks().add(bookFromDb);
             } else {
