@@ -12,8 +12,6 @@ import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -86,9 +84,9 @@ public class SearchController {
             bookshelfList = libraryService.fetchBookshelves();
             if (bookshelfList == null) {
                 bookshelfList = new ArrayList<>();
-                throw new LibraryEntityExceptions.BookshelfNotFoundException("There was a problem with retrieving your bookshelves.");
+                throw new LibraryEntityExceptions.BookshelfException("There was a problem with retrieving your bookshelves.");
             }
-        } catch (SearchExceptions.SearchResultsNotFoundException | LibraryEntityExceptions.BookshelfNotFoundException e) {
+        } catch (SearchExceptions.SearchResultsNotFoundException | LibraryEntityExceptions.BookshelfException e) {
             model.addAttribute("errorMessage", e.getMessage());
         }
 
@@ -140,18 +138,23 @@ public class SearchController {
      */
     @PostMapping("/bookshelf/add")
     public ModelAndView addBookToBookshelf(@ModelAttribute("addToBookshelfFormData") AddToBookshelfFormData addToBookshelfPostRequest, RedirectAttributes redirectAttributes) {
+        ModelAndView modelAndView = new ModelAndView();
+        List<Book> cachedSearchResults = cacheService.getCachedSearchResults(searchFormDataHolder.getSearchFormData());
         try {
             libraryService.addBookToBookshelf(addToBookshelfPostRequest.getFormDataISBN(), addToBookshelfPostRequest.getBookshelfId());
 
+            redirectAttributes.addFlashAttribute("searchResults", cachedSearchResults);
             redirectAttributes.addFlashAttribute("message", "Book added to bookshelf successfully.");
             redirectAttributes.addFlashAttribute("alertClass", "alert-success");
 
-            return new ModelAndView("redirect:/search");
-        } catch (Exception e) {
+            modelAndView.setViewName("redirect:/search");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("searchResults", cachedSearchResults);
             redirectAttributes.addFlashAttribute("message", "Failed to add book to bookshelf: " + e.getMessage());
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
 
-            return new ModelAndView("redirect:/search");
+            modelAndView.setViewName("redirect:/search");
         }
+        return modelAndView;
     }
 }

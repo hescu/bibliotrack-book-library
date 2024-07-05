@@ -36,6 +36,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+// TODO: Use inheritance, e.g.:  a BaseTestClass
+
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = {BibliotrackBookLibraryApplication.class, SecurityConfig.class}
