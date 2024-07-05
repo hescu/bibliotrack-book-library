@@ -9,11 +9,16 @@ import codingnomads.bibliotrackbooklibrary.model.Wishlist;
 import codingnomads.bibliotrackbooklibrary.model.forms.ReviewForm;
 import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/my-library")
@@ -31,36 +36,13 @@ public class LibraryController {
      */
     @GetMapping()
     public String displayMyLibrary(Model model) {
-        System.out.println(" DISPLAYING LIBRARY ");
         model.addAttribute("wishlist", libraryService.fetchBooksFromWishlist());
         model.addAttribute("bookshelfList", libraryService.fetchBookshelves());
         model.addAttribute("removeBookFromBookshelfFormData", new RemoveFromBookshelfFormData());
-        System.out.println("FOUND WISHLISTS AND BOOKSHELVES");
 
         return "my-library";
     }
 
-    /**
-     * Add book to wishlist.
-     *
-     * @param isbn               the isbn
-     * @param redirectAttributes the redirect attributes
-     * @return the model and view
-     */
-    @Loggable
-    @PostMapping("/wishlist/add")
-    public ModelAndView addBookToWishlist(@RequestParam("isbn") String isbn, RedirectAttributes redirectAttributes) {
-        try {
-            libraryService.addBookToWishlist(isbn);
-            redirectAttributes.addFlashAttribute("message", "Book added to wishlist successfully.");
-            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-            return new ModelAndView("redirect:/search");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Failed to add book to wishlist: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
-            return new ModelAndView("redirect:/error");
-        }
-    }
 
     /**
      * Remove book from wishlist.
@@ -84,29 +66,6 @@ public class LibraryController {
             model.addAttribute("error", "Failed to remove book from wishlist: " + e.getMessage());
         }
         return "redirect:/my-library";
-    }
-
-    /**
-     * Add book to bookshelf.
-     *
-     * @param addToBookshelfPostRequest the add to bookshelf post request
-     * @param redirectAttributes        the redirect attributes
-     * @return the model and view
-     */
-    @PostMapping("/bookshelf/add")
-    public ModelAndView addBookToBookshelf(@ModelAttribute("addToBookshelfFormData") AddToBookshelfFormData addToBookshelfPostRequest, RedirectAttributes redirectAttributes) {
-        try {
-            System.out.println("ISBN IN CONTROLLER: " + addToBookshelfPostRequest.getFormDataISBN());
-            System.out.println("BOOKSHELF ID IN CONTROLLER: " + addToBookshelfPostRequest.getBookshelfId());
-            libraryService.addBookToBookshelf(addToBookshelfPostRequest.getFormDataISBN(), addToBookshelfPostRequest.getBookshelfId());
-            redirectAttributes.addFlashAttribute("message", "Book added to bookshelf successfully.");
-            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-            return new ModelAndView("redirect:/search");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Failed to add book to bookshelf: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
-            return new ModelAndView("redirect:/error");
-        }
     }
 
 
@@ -133,6 +92,13 @@ public class LibraryController {
         return "my-library";
     }
 
+    /**
+     * Gets review form.
+     *
+     * @param isbn  the isbn
+     * @param model the model
+     * @return the review form
+     */
     @GetMapping("/review-form/{isbn}")
     public String getReviewForm(@PathVariable("isbn") String isbn, Model model) {
         ReviewForm reviewForm = new ReviewForm();
@@ -146,6 +112,14 @@ public class LibraryController {
         return "review-form";
     }
 
+    /**
+     * Submit review string.
+     *
+     * @param reviewForm         the review form
+     * @param model              the model
+     * @param redirectAttributes the redirect attributes
+     * @return the string
+     */
     @PostMapping("/review-form/submit-review")
     public String submitReview(@ModelAttribute("reviewForm") ReviewForm reviewForm, Model model, RedirectAttributes redirectAttributes) {
         boolean isSuccessful = libraryService.postReview(reviewForm);
