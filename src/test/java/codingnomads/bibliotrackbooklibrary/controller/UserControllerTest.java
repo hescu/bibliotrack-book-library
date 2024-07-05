@@ -56,6 +56,7 @@ class UserControllerTest {
         newUserPrincipal.setPassword("testPassword");
     }
 
+
     @Test
     public void registerNewUser_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/register")

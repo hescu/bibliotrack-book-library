@@ -1,6 +1,8 @@
 package codingnomads.bibliotrackbooklibrary.controller;
 
 import codingnomads.bibliotrackbooklibrary.BibliotrackBookLibraryApplication;
+import codingnomads.bibliotrackbooklibrary.cache.CacheService;
+import codingnomads.bibliotrackbooklibrary.dao.SearchFormDataHolder;
 import codingnomads.bibliotrackbooklibrary.model.Author;
 import codingnomads.bibliotrackbooklibrary.model.Book;
 import codingnomads.bibliotrackbooklibrary.model.forms.SearchFormData;
@@ -9,6 +11,9 @@ import codingnomads.bibliotrackbooklibrary.service.LibraryService;
 import codingnomads.bibliotrackbooklibrary.service.SearchService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,23 +56,35 @@ public class SearchControllerTest {
     @MockBean
     private LibraryService libraryService;
 
+    @Mock
+    private CacheService cacheService;
+
+    @InjectMocks
+    private SearchController searchController;
+
+    @MockBean
+    private SearchFormDataHolder searchFormDataHolder;
+
+    private SearchFormData searchFormData;
+
     @BeforeEach
     public void setUp() {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication auth = new UsernamePasswordAuthenticationToken("user", "password", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
         context.setAuthentication(auth);
         SecurityContextHolder.setContext(context);
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(searchController).build();
+
+        searchFormData = SearchFormData.builder()
+                .searchCriteria("all")
+                .searchString("Some Author")
+                .build();
+        searchFormDataHolder.setSearchFormData(searchFormData);
     }
 
     @Test
     public void performSearch_Controller_Success() throws Exception {
-        String searchText = "test";
-        String searchCriteria = "default";
-
-        SearchFormData searchFormData = SearchFormData.builder()
-                .searchString(searchText)
-                .searchCriteria(searchCriteria)
-                .build();
 
         Author author = Author.builder()
                 .name("Author")
@@ -91,12 +109,44 @@ public class SearchControllerTest {
         when(searchService.performSearch(searchFormData)).thenReturn(searchResults);
         when(libraryService.fetchBookshelves()).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(post("/search")
+        mockMvc.perform(post("/search/")
                         .flashAttr("searchFormData", searchFormData))
                         .andExpect(status().isOk())
                         .andExpect(model().attributeExists("searchResults"))
                         .andExpect(view().name("search"));
 
         verify(searchService).performSearch(any(SearchFormData.class));
+    }
+
+    @Test
+    public void testAddBookToWishlistSuccess() throws Exception {
+        List<Book> cachedSearchResults = new ArrayList<>();
+
+        when(searchFormDataHolder.getSearchFormData()).thenReturn(searchFormData);
+        when(cacheService.getCachedSearchResults(searchFormDataHolder.getSearchFormData())).thenReturn(cachedSearchResults);
+
+        doNothing().when(libraryService).addBookToWishlist(any(String.class));
+
+        mockMvc.perform(post("/search/wishlist/add")
+                        .param("isbn", "9780192835031"))
+                .andExpect(redirectedUrl("/search"))
+                .andExpect(flash().attribute("searchResults", cachedSearchResults))
+                .andExpect(flash().attribute("message", "Book added to wishlist successfully."))
+                .andExpect(flash().attribute("alertClass", "alert-success"));
+    }
+
+    @Test
+    public void testAddBookToWishlistFailure() throws Exception {
+        List<Book> cachedSearchResults = new ArrayList<>();
+
+        when(cacheService.getCachedSearchResults(searchFormDataHolder.getSearchFormData())).thenReturn(cachedSearchResults);
+        doThrow(new RuntimeException("Book is already on your wishlist.")).when(libraryService).addBookToWishlist(anyString());
+
+        mockMvc.perform(post("/search/wishlist/add")
+                        .param("isbn", "9780192835031"))
+                .andExpect(redirectedUrl("/search"))
+                .andExpect(flash().attribute("searchResults", cachedSearchResults))
+                .andExpect(flash().attribute("message", "Failed to add book to wishlist: Book is already on your wishlist."))
+                .andExpect(flash().attribute("alertClass", "alert-danger"));
     }
 }
