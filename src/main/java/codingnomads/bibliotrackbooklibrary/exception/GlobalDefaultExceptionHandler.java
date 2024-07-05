@@ -38,8 +38,8 @@ public class GlobalDefaultExceptionHandler {
         return "search";
     }
 
-    @ExceptionHandler(LibraryEntityExceptions.BookshelfNotFoundException.class)
-    public String handleBookshelfNotFoundException(LibraryEntityExceptions.BookshelfNotFoundException ex, Model model) {
+    @ExceptionHandler(LibraryEntityExceptions.BookshelfException.class)
+    public String handleBookshelfNotFoundException(LibraryEntityExceptions.BookshelfException ex, Model model) {
         model.addAttribute("errorMessage", ex.getMessage());
         return "search";
     }

@@ -3,7 +3,7 @@ package codingnomads.bibliotrackbooklibrary.service;
 import codingnomads.bibliotrackbooklibrary.dao.GoogleBookApi;
 import codingnomads.bibliotrackbooklibrary.dao.PostReviewApi;
 import codingnomads.bibliotrackbooklibrary.exception.BookNotFoundException;
-import codingnomads.bibliotrackbooklibrary.exception.LibraryEntityExceptions;
+import codingnomads.bibliotrackbooklibrary.exception.LibraryEntityExceptions.BookshelfException;
 import codingnomads.bibliotrackbooklibrary.exception.LibraryEntityExceptions.WishlistException;
 import codingnomads.bibliotrackbooklibrary.model.*;
 import codingnomads.bibliotrackbooklibrary.model.forms.ReviewForm;
@@ -48,6 +48,7 @@ public class LibraryService {
 
     @Autowired
     private PostReviewApi postReviewApi;
+
 
     /**
      * Add book to wishlist.
@@ -165,21 +166,29 @@ public class LibraryService {
      * @param isbn        the isbn
      * @param bookshelfId the bookshelf id
      */
-    public void addBookToBookshelf(String isbn, Long bookshelfId) {
-        try {
-            Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
-            if (bookFromDb == null) {
-                Book book = googleBookApi.searchBookByIsbn(isbn);
-                System.out.println("BOOK FROM DB IS NULL. GOOGLE SEARCH BOOK ISBN: " + book.getIsbn());
-                addBookToDB(book);
-                Book newlyAddedBook = libraryMapper.findBookByIsbn(isbn);
-                libraryMapper.addBookBookshelfRelation(newlyAddedBook.getId(), bookshelfId);
-            } else {
-                System.out.println("BOOK FROM DB - ISBN: " + bookFromDb.getIsbn());
-                libraryMapper.addBookBookshelfRelation(bookFromDb.getId(), bookshelfId);
+    @Transactional
+    public void addBookToBookshelf(String isbn, Long bookshelfId) throws BookshelfException {
+        User currentUser = getCurrentUser();
+        if (currentUser != null) {
+            Bookshelf bookshelf = currentUser.getBookshelves()
+                    .stream()
+                    .filter(b -> b.getId().equals(bookshelfId))
+                    .findFirst()
+                    .orElseThrow(() -> new BookshelfException("Bookshelf not found"));
+
+            if (bookshelf.getBooks().stream().anyMatch(b -> b.getIsbn().equals(isbn))) {
+                throw new BookshelfException("Book is already on your bookshelf.");
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+        }
+
+        Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
+        if (bookFromDb == null) {
+            Book book = googleBookApi.searchBookByIsbn(isbn);
+            addBookToDB(book);
+            Book newlyAddedBook = libraryMapper.findBookByIsbn(isbn);
+            libraryMapper.addBookBookshelfRelation(newlyAddedBook.getId(), bookshelfId);
+        } else {
+            libraryMapper.addBookBookshelfRelation(bookFromDb.getId(), bookshelfId);
         }
     }
 
