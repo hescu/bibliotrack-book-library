@@ -111,6 +111,7 @@ public class SearchControllerTest {
         when(searchService.performSearch(searchFormData)).thenReturn(searchResults);
         when(libraryService.fetchBookshelves()).thenReturn(Collections.emptyList());
 
+
         mockMvc.perform(post("/search/")
                         .flashAttr("searchFormData", searchFormData))
                         .andExpect(status().isOk())
