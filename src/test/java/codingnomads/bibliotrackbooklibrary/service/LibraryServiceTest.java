@@ -11,10 +11,7 @@ import codingnomads.bibliotrackbooklibrary.repository.WishlistRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -56,6 +53,7 @@ public class LibraryServiceTest {
     private Bookshelf bookshelf1;
     private Bookshelf bookshelf2;
     private String isbn;
+    private List<Bookshelf> userBookshelves;
 
     @BeforeEach
     public void setUp() {
@@ -74,9 +72,14 @@ public class LibraryServiceTest {
         bookshelf2 = new Bookshelf();
         bookshelf2.setId(2L);
 
+        userBookshelves = new ArrayList<>();
+        userBookshelves.add(bookshelf1);
+        userBookshelves.add(bookshelf2);
+
         wishlist.setId(1L);
         wishlist.setBooks(new HashSet<>());
         currentUser.setWishlist(wishlist);
+        currentUser.setBookshelves(List.of(bookshelf1));
 
         lenient().doReturn(currentUser).when(libraryServiceMock).getCurrentUser();
     }
@@ -154,7 +157,16 @@ public class LibraryServiceTest {
     @Test
     void addBookToBookshelf_BookExistsInDb() {
         Long bookshelfId = 1L;
+        Book newBook = Book.builder()
+                .isbn("12321321321213")
+                .build();
+
+        HashSet<Book> bookSet = new HashSet<>();
+        bookSet.add(newBook);
+        bookshelf1.setBooks(bookSet);
+
         when(libraryMapperMock.findBookByIsbn(isbn)).thenReturn(book);
+        when(libraryServiceMock.fetchBookshelves()).thenReturn(userBookshelves);
 
         libraryServiceMock.addBookToBookshelf(isbn, bookshelfId);
 
@@ -167,17 +179,27 @@ public class LibraryServiceTest {
     public void addBookToBookshelf_BookNotInDb() {
         Long bookshelfId = 1L;
         Book googleBook = new Book();
+        Book newBook = Book.builder()
+                .isbn("12321321321213")
+                .build();
+
         googleBook.setIsbn(isbn);
         googleBook.setId(2L);
+
+        HashSet<Book> bookSet = new HashSet<>();
+        bookSet.add(newBook);
+        bookshelf1.setBooks(bookSet);
 
         List<Author> listOfAuthors = new ArrayList<>();
         googleBook.setAuthors(listOfAuthors);
 
+        when(libraryServiceMock.fetchBookshelves()).thenReturn(userBookshelves);
         when(libraryMapperMock.findBookByIsbn(isbn))
                 .thenReturn(null)
                 .thenReturn(googleBook);
 
         when(googleBookApiMock.searchBookByIsbn(isbn)).thenReturn(googleBook);
+
 
         libraryServiceMock.addBookToBookshelf(isbn, bookshelfId);
 

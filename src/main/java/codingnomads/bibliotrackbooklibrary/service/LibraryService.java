@@ -168,17 +168,14 @@ public class LibraryService {
      */
     @Transactional
     public void addBookToBookshelf(String isbn, Long bookshelfId) throws BookshelfException {
-        User currentUser = getCurrentUser();
-        if (currentUser != null) {
-            Bookshelf bookshelf = currentUser.getBookshelves()
-                    .stream()
-                    .filter(b -> b.getId().equals(bookshelfId))
-                    .findFirst()
-                    .orElseThrow(() -> new BookshelfException("Bookshelf not found"));
+        List<Bookshelf> userBookshelves = fetchBookshelves();
+        Bookshelf bookshelf = userBookshelves.stream().
+                filter(b -> b.getId().equals(bookshelfId))
+                .findFirst()
+                .orElseThrow(() -> new BookshelfException("Bookshelf not found"));
 
-            if (bookshelf.getBooks().stream().anyMatch(b -> b.getIsbn().equals(isbn))) {
-                throw new BookshelfException("Book is already on your bookshelf.");
-            }
+        if (bookshelf.getBooks().stream().anyMatch(b -> b.getIsbn().equals(isbn))) {
+            throw new BookshelfException("Book is already on your bookshelf.");
         }
 
         Book bookFromDb = libraryMapper.findBookByIsbn(isbn);
