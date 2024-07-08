@@ -3,7 +3,7 @@ FROM gradle:8.5.0-jdk21 as builder
 WORKDIR /home/gradle/src
 COPY --chown=gradle:gradle . /home/gradle/src
 
-RUN gradle build -x test --no-daemon
+RUN gradle build --no-daemon
 
 FROM openjdk:21
 
